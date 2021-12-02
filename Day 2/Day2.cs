@@ -5,7 +5,7 @@ class AdventOfCodeDay2
 
     static void Main()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./Day 2/Problem1Input.txt");
         int depthTimesHoriz = Problem1(lines);
 
         Console.WriteLine("The final depth times horizontal distance is " + depthTimesHoriz);
