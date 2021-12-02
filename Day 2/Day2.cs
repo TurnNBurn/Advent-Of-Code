@@ -7,8 +7,10 @@ class AdventOfCodeDay2
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 2/Problem1Input.txt");
         int depthTimesHoriz = Problem1(lines);
+        int depthTimesHorizCorrected = Problem2(lines);
 
         Console.WriteLine("The final depth times horizontal distance is " + depthTimesHoriz);
+        Console.WriteLine("The final depth times horizontal distance taking into account aim is " + depthTimesHorizCorrected);
     }
 
     private static int Problem1(string[] lines)
@@ -33,6 +35,16 @@ class AdventOfCodeDay2
                 horiz += distance;
             }
         }
+
+        return depth * horiz;
+    }
+
+    static int Problem2(string[] lines)
+    {
+        int depth = 0;
+        int horiz = 0;
+        int aim = 0;
+
 
         return depth * horiz;
     }
