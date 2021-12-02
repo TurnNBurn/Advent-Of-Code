@@ -44,7 +44,25 @@ class AdventOfCodeDay2
         int depth = 0;
         int horiz = 0;
         int aim = 0;
-
+        foreach (string line in lines)
+        {
+            string[] words = line.Split(' ');
+            int distance = Convert.ToInt32(words[1]);
+            string direction = words[0].ToUpper();
+            if (direction.Equals("UP"))
+            {
+                aim -= distance;
+            }
+            if (direction.Equals("DOWN"))
+            {
+                aim += distance;
+            }
+            if (direction.Equals("FORWARD"))
+            {
+                horiz += distance;
+                depth += distance * aim;
+            }
+        }
 
         return depth * horiz;
     }
