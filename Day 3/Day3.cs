@@ -33,12 +33,12 @@ class AdventOfCodeDay3
             //amount of 0's and 1's for a given bit.
             int binary = binaryCount[i] * 2 > lines.Length ? 1 : 0;
             int binaryInverse = binaryCount[i] * 2 > lines.Length ? 0 : 1;
-            gamma += ConvertToBinary(binary, binaryCount.Length, i);
-            epsilon += ConvertToBinary(binaryInverse, binaryCount.Length, i);
+            gamma += ConvertToDecimal(binary, binaryCount.Length, i);
+            epsilon += ConvertToDecimal(binaryInverse, binaryCount.Length, i);
         }
         return gamma * epsilon;
     }
-    private static int ConvertToBinary(int bit, int binaryLength, int position)
+    private static int ConvertToDecimal(int bit, int binaryLength, int position)
     {
         return bit * (int)Math.Pow(2, binaryLength - position - 1);
     }
