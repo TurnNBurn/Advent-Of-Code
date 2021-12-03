@@ -29,11 +29,17 @@ class AdventOfCodeDay3
         int epsilon = 0;
         for (int i = 0; i < binaryCount.Length; i++)
         {
-            int binary = lines.Length / 2 > binaryCount[i] ? 0 : 1;
-            int binaryInverse = lines.Length / 2 > binaryCount[i] ? 1 : 0;
-            gamma += binary * (int)Math.Pow(2, binaryCount.Length - i);
-            epsilon += binaryInverse * (int)Math.Pow(2, binaryCount.Length - i);
+            //Note the assumption here that there will never be an equal
+            //amount of 0's and 1's for a given bit.
+            int binary = binaryCount[i] * 2 > lines.Length ? 1 : 0;
+            int binaryInverse = binaryCount[i] * 2 > lines.Length ? 0 : 1;
+            gamma += ConvertToBinary(binary, binaryCount.Length, i);
+            epsilon += ConvertToBinary(binaryInverse, binaryCount.Length, i);
         }
         return gamma * epsilon;
+    }
+    private static int ConvertToBinary(int bit, int binaryLength, int position)
+    {
+        return bit * (int)Math.Pow(2, binaryLength - position - 1);
     }
 }
