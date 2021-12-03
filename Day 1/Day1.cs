@@ -1,16 +1,16 @@
 using System;
 
-class AdventOfCodeDay1
+public class AdventOfCodeDay1
 {
 
-    static void Main()
+    public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./Day 1/Problem1Input.txt");
         int numIncreases = Problem1(lines);
         int numThreeMeasureIncreases = Problem2(lines);
 
-        Console.WriteLine("Problem 1: There are " + numIncreases + " increases.");
-        Console.WriteLine("Problem 2: There are " + numThreeMeasureIncreases + " three measurement increases.");
+        Console.WriteLine("Day 1 - Problem 1: There are " + numIncreases + " increases.");
+        Console.WriteLine("Day 1 - Problem 2: There are " + numThreeMeasureIncreases + " three measurement increases.");
     }
 
     private static int Problem1(string[] lines)

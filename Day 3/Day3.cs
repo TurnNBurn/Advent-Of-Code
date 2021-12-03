@@ -1,19 +1,19 @@
 using System;
 
-class AdventOfCodeDay3
+public class AdventOfCodeDay3
 {
 
-    static void Main()
+    public static void run()
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 3/Problem1Input.txt");
         int powerConsumption = Problem1(lines);
         int lifeSupport = Problem2(lines);
 
-        Console.WriteLine("The power consumption is " + powerConsumption);
-        Console.WriteLine("The life support rating is " + lifeSupport);
+        Console.WriteLine("Day 3 - Problem 1: The power consumption is " + powerConsumption);
+        Console.WriteLine("Day 3 - Problem 1: The life support rating is " + lifeSupport);
     }
 
-    static private int Problem1(string[] lines)
+    private static int Problem1(string[] lines)
     {
         //Assume that each line will have a consistent length
         int[] mostCommonBitArray = BuildMostCommonBitArray(lines.ToList<string>());

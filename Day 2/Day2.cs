@@ -1,16 +1,16 @@
 using System;
 
-class AdventOfCodeDay2
+public class AdventOfCodeDay2
 {
 
-    static void Main()
+    public static void run()
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 2/Problem1Input.txt");
         int depthTimesHoriz = Problem1(lines);
         int depthTimesHorizCorrected = Problem2(lines);
 
-        Console.WriteLine("The final depth times horizontal distance is " + depthTimesHoriz);
-        Console.WriteLine("The final depth times horizontal distance taking into account aim is " + depthTimesHorizCorrected);
+        Console.WriteLine("Day 2 - Problem 1: The final depth times horizontal distance is " + depthTimesHoriz);
+        Console.WriteLine("Day 2 - Problem 2: The final depth times horizontal distance taking into account aim is " + depthTimesHorizCorrected);
     }
 
     private static int Problem1(string[] lines)
