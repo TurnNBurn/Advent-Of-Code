@@ -16,7 +16,7 @@ class AdventOfCodeDay3
     static private int Problem1(string[] lines)
     {
         //Assume that each line will have a consistent length
-        int[] mostCommonBitArray = BuildMostCommonBitArray(lines);
+        int[] mostCommonBitArray = BuildMostCommonBitArray(lines.ToList<string>());
         int gamma = 0;
         int epsilon = 0;
         for (int i = 0; i < mostCommonBitArray.Length; i++)
@@ -45,7 +45,7 @@ class AdventOfCodeDay3
         return mostCommonBitArray[position] * 2 >= numBytes ? 0 : 1;
     }
 
-    private static int[] BuildMostCommonBitArray(string[] lines)
+    private static int[] BuildMostCommonBitArray(List<string> lines)
     {
         //Assume that each line will have a consistent length
         int[] mostCommonBitArray = new int[lines[0].Length];
@@ -64,10 +64,8 @@ class AdventOfCodeDay3
 
     private static int Problem2(string[] lines)
     {
-        int[] mostCommonBitArray = BuildMostCommonBitArray(lines);
-        List<string> input = lines.ToList<string>();
-        List<string> oxyList = FilterListByBit(mostCommonBitArray, 0, lines.Length, listType.oxy, input);
-        List<string> c02List = FilterListByBit(mostCommonBitArray, 0, lines.Length, listType.c02, input);
+        List<string> oxyList = FilterListByBit(lines.ToList<string>(), 0, listType.oxy);
+        List<string> c02List = FilterListByBit(lines.ToList<string>(), 0, listType.c02);
         return MultiplyOxyAndC02(oxyList[0], c02List[0]);
     }
 
@@ -77,9 +75,10 @@ class AdventOfCodeDay3
         c02
     }
 
-    private static List<string> FilterListByBit(int[] mostCommonBitArray, int filterBit, int numBytes, listType type, List<string> list)
+    private static List<string> FilterListByBit(List<string> list, int filterBit, listType type)
     {
-        int filterVal = type == listType.oxy ? GetMostCommonBit(mostCommonBitArray, filterBit, numBytes) : GetLeastCommonBit(mostCommonBitArray, filterBit, numBytes);
+        int[] mostCommonBitArray = BuildMostCommonBitArray(list);
+        int filterVal = type == listType.oxy ? GetMostCommonBit(mostCommonBitArray, filterBit, list.Count) : GetLeastCommonBit(mostCommonBitArray, filterBit, list.Count);
         List<string> validEntries = new List<string>();
         foreach (string listEntry in list)
         {
@@ -90,11 +89,11 @@ class AdventOfCodeDay3
         }
         if (validEntries.Count == 1)
         {
-            return list;
+            return validEntries;
         }
         else
         {
-            return FilterListByBit(mostCommonBitArray, filterBit + 1, numBytes, type, validEntries);
+            return FilterListByBit(validEntries, filterBit + 1, type);
         }
     }
 
@@ -104,8 +103,8 @@ class AdventOfCodeDay3
         int c02Int = 0;
         for (int i = 0; i < oxy.Length; i++)
         {
-            oxyInt += ConvertToDecimal(oxy[i], oxy.Length, i);
-            c02Int += ConvertToDecimal(c02[i], c02.Length, i);
+            oxyInt += ConvertToDecimal(int.Parse(oxy[i].ToString()), oxy.Length, i);
+            c02Int += ConvertToDecimal(int.Parse(c02[i].ToString()), c02.Length, i);
         }
         return oxyInt * c02Int;
     }
