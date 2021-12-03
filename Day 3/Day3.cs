@@ -23,8 +23,8 @@ class AdventOfCodeDay3
         {
             //Note the assumption here that there will never be an equal
             //amount of 0's and 1's for a given bit.
-            int binary = mostCommonBitArray[i] * 2 > lines.Length ? 1 : 0;
-            int binaryInverse = mostCommonBitArray[i] * 2 > lines.Length ? 0 : 1;
+            int binary = GetMostCommonBit(mostCommonBitArray, i, lines.Length);
+            int binaryInverse = GetLeastCommonBit(mostCommonBitArray, i, lines.Length);
             gamma += ConvertToDecimal(binary, mostCommonBitArray.Length, i);
             epsilon += ConvertToDecimal(binaryInverse, mostCommonBitArray.Length, i);
         }
@@ -33,6 +33,16 @@ class AdventOfCodeDay3
     private static int ConvertToDecimal(int bit, int binaryLength, int position)
     {
         return bit * (int)Math.Pow(2, binaryLength - position - 1);
+    }
+
+    private static int GetMostCommonBit(int[] mostCommonBitArray, int position, int numBytes)
+    {
+        return mostCommonBitArray[position] * 2 >= numBytes ? 1 : 0;
+    }
+
+    private static int GetLeastCommonBit(int[] mostCommonBitArray, int position, int numBytes)
+    {
+        return mostCommonBitArray[position] * 2 >= numBytes ? 0 : 1;
     }
 
     private static int[] BuildMostCommonBitArray(string[] lines)
