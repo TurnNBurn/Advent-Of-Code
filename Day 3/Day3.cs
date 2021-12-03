@@ -64,12 +64,49 @@ class AdventOfCodeDay3
 
     private static int Problem2(string[] lines)
     {
-        int oxygen = 0;
-        int c02scrub = 0;
         int[] mostCommonBitArray = BuildMostCommonBitArray(lines);
-
-        return oxygen * c02scrub;
+        List<string> input = lines.ToList<string>();
+        List<string> oxyList = FilterListByBit(mostCommonBitArray, 0, lines.Length, listType.oxy, input);
+        List<string> c02List = FilterListByBit(mostCommonBitArray, 0, lines.Length, listType.c02, input);
+        return MultiplyOxyAndC02(oxyList[0], c02List[0]);
     }
 
+    enum listType
+    {
+        oxy,
+        c02
+    }
 
+    private static List<string> FilterListByBit(int[] mostCommonBitArray, int filterBit, int numBytes, listType type, List<string> list)
+    {
+        int filterVal = type == listType.oxy ? GetMostCommonBit(mostCommonBitArray, filterBit, numBytes) : GetLeastCommonBit(mostCommonBitArray, filterBit, numBytes);
+        List<string> validEntries = new List<string>();
+        foreach (string listEntry in list)
+        {
+            if (int.Parse(listEntry[filterBit].ToString()) == filterVal)
+            {
+                validEntries.Add(listEntry);
+            }
+        }
+        if (validEntries.Count == 1)
+        {
+            return list;
+        }
+        else
+        {
+            return FilterListByBit(mostCommonBitArray, filterBit + 1, numBytes, type, validEntries);
+        }
+    }
+
+    private static int MultiplyOxyAndC02(string oxy, string c02)
+    {
+        int oxyInt = 0;
+        int c02Int = 0;
+        for (int i = 0; i < oxy.Length; i++)
+        {
+            oxyInt += ConvertToDecimal(oxy[i], oxy.Length, i);
+            c02Int += ConvertToDecimal(c02[i], c02.Length, i);
+        }
+        return oxyInt * c02Int;
+    }
 }
