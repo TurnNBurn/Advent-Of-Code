@@ -14,27 +14,9 @@ public class AdventOfCodeDay4
 
     private static int Problem1(string[] lines)
     {
-        int bingoScore = 0;
         string[] bingoNumbers = lines[0].Split(',');
         List<Board> bingoBoards = ParseBingoBoards(lines);
-        return bingoScore;
-    }
-
-    private static void PrintBoards(List<Board> bingoBoards)
-    {
-        Console.WriteLine("Test");
-        foreach (Board board in bingoBoards)
-        {
-            Console.WriteLine("Board Solutions: ");
-            foreach (List<int> solution in board.solutions)
-            {
-                Console.WriteLine("");
-                foreach (int num in solution)
-                {
-                    Console.Write(num + " ");
-                }
-            }
-        }
+        return FindWinningBoard(bingoNumbers, bingoBoards);
     }
 
     private static List<Board> ParseBingoBoards(string[] lines)
@@ -43,16 +25,17 @@ public class AdventOfCodeDay4
         List<string> boardContents = new List<string>();
         for (int i = 2; i < lines.Length; i++)
         {
-            if (!lines[i].Equals(String.Empty))
-            {
-                boardContents.Add(lines[i]);
-            }
-            if ((i - 1) % 5 == 0)
+            if (lines[i].Equals(String.Empty))
             {
                 bingoBoards.Add(BuildBoard(boardContents));
                 boardContents.Clear();
             }
+            else
+            {
+                boardContents.Add(lines[i]);
+            }
         }
+        bingoBoards.Add(BuildBoard(boardContents));
         return bingoBoards;
     }
 
@@ -116,7 +99,22 @@ public class AdventOfCodeDay4
     private static int CalculateWinningScore(List<int> numbersCalled, Board board)
     {
         int winningScore = 0;
-        return winningScore;
+        HashSet<int> boardNumbers = new HashSet<int>();
+        foreach (List<int> solution in board.solutions)
+        {
+            foreach (int num in solution)
+            {
+                if (!numbersCalled.Contains(num))
+                {
+                    boardNumbers.Add(num);
+                }
+            }
+        }
+        foreach (int num in boardNumbers)
+        {
+            winningScore += num;
+        }
+        return winningScore * numbersCalled[numbersCalled.Count - 1];
     }
 
     private static bool IsBoardAWinner(List<int> numbersCalled, Board board)
