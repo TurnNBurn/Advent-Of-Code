@@ -5,7 +5,7 @@ public class AdventOfCodeDay4
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 3/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./Day 4/Problem1Input.txt");
         int bingoScore = Problem1(lines);
         //int lifeSupport = Problem2(lines);
 
@@ -16,7 +16,25 @@ public class AdventOfCodeDay4
     {
         int bingoScore = 0;
         string[] bingoNumbers = lines[0].Split(',');
+        List<Board> bingoBoards = ParseBingoBoards(lines);
         return bingoScore;
+    }
+
+    private static void PrintBoards(List<Board> bingoBoards)
+    {
+        Console.WriteLine("Test");
+        foreach (Board board in bingoBoards)
+        {
+            Console.WriteLine("Board Solutions: ");
+            foreach (List<int> solution in board.solutions)
+            {
+                Console.WriteLine("");
+                foreach (int num in solution)
+                {
+                    Console.Write(num + " ");
+                }
+            }
+        }
     }
 
     private static List<Board> ParseBingoBoards(string[] lines)
@@ -25,15 +43,14 @@ public class AdventOfCodeDay4
         List<string> boardContents = new List<string>();
         for (int i = 2; i < lines.Length; i++)
         {
-            if (lines[i].Equals(String.Empty))
-            {
-                Board temp = BuildBoard(boardContents);
-                bingoBoards.Add(temp);
-                boardContents.Clear();
-            }
-            else
+            if (!lines[i].Equals(String.Empty))
             {
                 boardContents.Add(lines[i]);
+            }
+            if ((i - 1) % 5 == 0)
+            {
+                bingoBoards.Add(BuildBoard(boardContents));
+                boardContents.Clear();
             }
         }
         return bingoBoards;
@@ -43,9 +60,13 @@ public class AdventOfCodeDay4
     {
         Board board = new Board();
         List<List<int>> columns = new List<List<int>>();
+        for (int i = 0; i < 5; i++)
+        {
+            columns.Add(new List<int>());
+        }
         for (int i = 0; i < boardContents.Count; i++)
         {
-            string[] row = boardContents[i].Split(',');
+            string[] row = boardContents[i].Split(new string[] { "  ", " " }, StringSplitOptions.RemoveEmptyEntries);
             List<int> rowList = new List<int>();
             for (int j = 0; j < row.Length; j++)
             {
