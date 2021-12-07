@@ -7,9 +7,10 @@ public class AdventOfCodeDay4
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 4/Problem1Input.txt");
         int bingoScore = Problem1(lines);
-        //int lifeSupport = Problem2(lines);
+        int losingBingoScore = Problem2(lines);
 
         Console.WriteLine("Day 4 - Problem 1: The bingo score of the first board to win is " + bingoScore);
+        Console.WriteLine("Day 4 - Problem 2: The score of the last winning board is " + losingBingoScore);
     }
 
     private static int Problem1(string[] lines)
@@ -17,6 +18,13 @@ public class AdventOfCodeDay4
         string[] bingoNumbers = lines[0].Split(',');
         List<Board> bingoBoards = ParseBingoBoards(lines);
         return FindWinningBoard(bingoNumbers, bingoBoards);
+    }
+
+    private static int Problem2(string[] lines)
+    {
+        string[] bingoNumbers = lines[0].Split(',');
+        List<Board> bingoBoards = ParseBingoBoards(lines);
+        return FindLastWinningBoard(bingoNumbers, bingoBoards);
     }
 
     private static List<Board> ParseBingoBoards(string[] lines)
@@ -72,9 +80,23 @@ public class AdventOfCodeDay4
         List<int> numbersCalled = new List<int>();
         for (int i = 0; i < bingoNumbers.Length; i++)
         {
-            int newNumber = Convert.ToInt32(bingoNumbers[i]);
-            numbersCalled.Add(newNumber);
+            numbersCalled.Add(Convert.ToInt32(bingoNumbers[i]));
             if (CheckForWinner(numbersCalled, bingoBoards, out winningScore))
+            {
+                return winningScore;
+            }
+        }
+        return winningScore;
+    }
+
+    private static int FindLastWinningBoard(string[] bingoNumbers, List<Board> bingoBoards)
+    {
+        int winningScore = 0;
+        List<int> numbersCalled = new List<int>();
+        for (int i = 0; i < bingoNumbers.Length; i++)
+        {
+            numbersCalled.Add(Convert.ToInt32(bingoNumbers[i]));
+            if (CheckForLastWinner(numbersCalled, bingoBoards, out winningScore))
             {
                 return winningScore;
             }
@@ -92,6 +114,32 @@ public class AdventOfCodeDay4
                 winningScore = CalculateWinningScore(numbersCalled, bingoBoards[i]);
                 return true;
             }
+        }
+        return false;
+    }
+
+    private static bool CheckForLastWinner(List<int> numbersCalled, List<Board> bingoBoards, out int winningScore)
+    {
+        winningScore = 0;
+        List<Board> boardsToRemove = new List<Board>();
+        for (int i = 0; i < bingoBoards.Count; i++)
+        {
+            if (IsBoardAWinner(numbersCalled, bingoBoards[i]))
+            {
+                if (bingoBoards.Count == 1)
+                {
+                    winningScore = CalculateWinningScore(numbersCalled, bingoBoards[i]);
+                    return true;
+                }
+                else
+                {
+                    boardsToRemove.Add(bingoBoards[i]);
+                }
+            }
+        }
+        foreach (Board board in boardsToRemove)
+        {
+            bingoBoards.Remove(board);
         }
         return false;
     }
