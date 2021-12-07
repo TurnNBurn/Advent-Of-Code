@@ -83,6 +83,66 @@ public class AdventOfCodeDay4
         return board;
     }
 
+    private static int FindWinningBoard(string[] bingoNumbers, List<Board> bingoBoards)
+    {
+        int winningScore = 0;
+        List<int> numbersCalled = new List<int>();
+        for (int i = 0; i < bingoNumbers.Length; i++)
+        {
+            int newNumber = Convert.ToInt32(bingoNumbers[i]);
+            numbersCalled.Add(newNumber);
+            if (CheckForWinner(numbersCalled, bingoBoards, out winningScore))
+            {
+                return winningScore;
+            }
+        }
+        return winningScore;
+    }
+
+    private static bool CheckForWinner(List<int> numbersCalled, List<Board> bingoBoards, out int winningScore)
+    {
+        winningScore = 0;
+        for (int i = 0; i < bingoBoards.Count; i++)
+        {
+            if (IsBoardAWinner(numbersCalled, bingoBoards[i]))
+            {
+                winningScore = CalculateWinningScore(numbersCalled, bingoBoards[i]);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int CalculateWinningScore(List<int> numbersCalled, Board board)
+    {
+        int winningScore = 0;
+        return winningScore;
+    }
+
+    private static bool IsBoardAWinner(List<int> numbersCalled, Board board)
+    {
+        foreach (List<int> solution in board.solutions)
+        {
+            if (SolutionHasBeenCalled(numbersCalled, solution))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static bool SolutionHasBeenCalled(List<int> numbersCalled, List<int> solution)
+    {
+        foreach (int num in solution)
+        {
+            if (!numbersCalled.Contains(num))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public class Board
     {
         public Board()
