@@ -7,7 +7,9 @@ public class AdventOfCodeDay5
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 5/Problem1Input.txt");
         int coordsWithMoreThanOneHit = Problem1(lines);
+        int coordsIncludingDiagonal = Problem2(lines);
         Console.WriteLine("Day 5 - Problem 1: There are " + coordsWithMoreThanOneHit + " coordinates hit by more than one line.");
+        Console.WriteLine("Day 5 - Problem 2: There are " + coordsIncludingDiagonal + " coordinates hit by more than one line including diagonals.");
     }
 
     private static int Problem1(string[] lines)
@@ -53,6 +55,53 @@ public class AdventOfCodeDay5
         return coordsWithMoreThanOneHit;
     }
 
+    private static int Problem2(string[] lines)
+    {
+        Dictionary<Coordinates, int> map = new Dictionary<Coordinates, int>();
+        foreach (string line in lines)
+        {
+            string[] input = line.Split(new string[] { " -> " }, StringSplitOptions.RemoveEmptyEntries);
+            Coordinates startCoordinates = ParseCoordinate(input[0]);
+            Coordinates endCoordinates = ParseCoordinate(input[1]);
+            if (startCoordinates.x == endCoordinates.x)
+            {
+                if (startCoordinates.y < endCoordinates.y)
+                {
+
+                    MarkVerticalLine(startCoordinates, endCoordinates, map);
+                }
+                else
+                {
+                    MarkVerticalLine(endCoordinates, startCoordinates, map);
+                }
+            }
+            else if (startCoordinates.y == endCoordinates.y)
+            {
+                if (startCoordinates.x < endCoordinates.x)
+                {
+                    MarkHorizontalLine(startCoordinates, endCoordinates, map);
+                }
+                else
+                {
+                    MarkHorizontalLine(endCoordinates, startCoordinates, map);
+                }
+            }
+            else
+            {
+                MarkDiagonalLine(startCoordinates, endCoordinates, map);
+            }
+        }
+        int coordsWithMoreThanOneHit = 0;
+        foreach (KeyValuePair<Coordinates, int> val in map)
+        {
+            if (val.Value > 1)
+            {
+                coordsWithMoreThanOneHit++;
+            }
+        }
+        return coordsWithMoreThanOneHit;
+    }
+
     private static Coordinates ParseCoordinate(string input)
     {
         string[] coord = input.Split(',');
@@ -72,6 +121,16 @@ public class AdventOfCodeDay5
         for (int i = 0; i <= Math.Abs(startCoordinates.x - endCoordinates.x); i++)
         {
             UpdateMap(new Coordinates(startCoordinates.x + i, startCoordinates.y), map);
+        }
+    }
+
+    private static void MarkDiagonalLine(Coordinates startCoordinates, Coordinates endCoordinates, Dictionary<Coordinates, int> map)
+    {
+        int xAdjustment = startCoordinates.x > endCoordinates.x ? -1 : 1;
+        int yAdjustment = startCoordinates.y > endCoordinates.y ? -1 : 1;
+        for (int i = 0; i <= Math.Abs(startCoordinates.x - endCoordinates.x); i++)
+        {
+            UpdateMap(new Coordinates(startCoordinates.x + (xAdjustment * i), startCoordinates.y + (yAdjustment * i)), map);
         }
     }
 
