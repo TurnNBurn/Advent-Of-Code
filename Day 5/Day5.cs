@@ -65,26 +65,11 @@ public class AdventOfCodeDay5
             Coordinates endCoordinates = ParseCoordinate(input[1]);
             if (startCoordinates.x == endCoordinates.x)
             {
-                if (startCoordinates.y < endCoordinates.y)
-                {
-
-                    MarkVerticalLine(startCoordinates, endCoordinates, map);
-                }
-                else
-                {
-                    MarkVerticalLine(endCoordinates, startCoordinates, map);
-                }
+                MarkVerticalLine(startCoordinates, endCoordinates, map);
             }
             else if (startCoordinates.y == endCoordinates.y)
             {
-                if (startCoordinates.x < endCoordinates.x)
-                {
-                    MarkHorizontalLine(startCoordinates, endCoordinates, map);
-                }
-                else
-                {
-                    MarkHorizontalLine(endCoordinates, startCoordinates, map);
-                }
+                MarkHorizontalLine(startCoordinates, endCoordinates, map);
             }
             else
             {
@@ -110,17 +95,19 @@ public class AdventOfCodeDay5
 
     private static void MarkVerticalLine(Coordinates startCoordinates, Coordinates endCoordinates, Dictionary<Coordinates, int> map)
     {
+        int yAdjustment = startCoordinates.y > endCoordinates.y ? -1 : 1;
         for (int i = 0; i <= Math.Abs(startCoordinates.y - endCoordinates.y); i++)
         {
-            UpdateMap(new Coordinates(startCoordinates.x, startCoordinates.y + i), map);
+            UpdateMap(new Coordinates(startCoordinates.x, startCoordinates.y + (yAdjustment * i)), map);
         }
     }
 
     private static void MarkHorizontalLine(Coordinates startCoordinates, Coordinates endCoordinates, Dictionary<Coordinates, int> map)
     {
+        int xAdjustment = startCoordinates.x > endCoordinates.x ? -1 : 1;
         for (int i = 0; i <= Math.Abs(startCoordinates.x - endCoordinates.x); i++)
         {
-            UpdateMap(new Coordinates(startCoordinates.x + i, startCoordinates.y), map);
+            UpdateMap(new Coordinates(startCoordinates.x + (xAdjustment * i), startCoordinates.y), map);
         }
     }
 
