@@ -20,7 +20,8 @@ public class AdventOfCodeDay6
         }
         for (int days = 0; days < 80; days++)
         {
-            for (int i = 0; i < fish.Count; i++)
+            int fishCount = fish.Count;
+            for (int i = 0; i < fishCount; i++)
             {
                 if (fish[i] == 0)
                 {
