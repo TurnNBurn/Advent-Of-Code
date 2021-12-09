@@ -23,7 +23,66 @@ public class AdventOfCodeDay9
     {
         int[,] map = BuildMap(lines);
         List<Coordinates> lowPoints = FindLowPoints(map);
-        return 0;
+        List<int> basinSizes = GetBasinSizes(map, lowPoints);
+        return BasinSizeProduct(basinSizes);
+    }
+
+    private static int BasinSizeProduct(List<int> basinSizes)
+    {
+        int ret = 1;
+        foreach (int basin in basinSizes)
+        {
+            ret *= basin;
+        }
+        return ret;
+    }
+
+    private static List<int> GetBasinSizes(int[,] map, List<Coordinates> lowPoints)
+    {
+        List<int> basinSizes = new List<int>();
+        foreach (Coordinates lowPoint in lowPoints)
+        {
+            basinSizes = TryAddBasinSize(basinSizes, GetOneBasinSize(map, lowPoint.x, lowPoint.y, previousDirection.none));
+        }
+        return basinSizes;
+    }
+
+    private static List<int> TryAddBasinSize(List<int> basinSizes, int newSize)
+    {
+        if (basinSizes.Count < 3)
+        {
+            basinSizes.Add(newSize);
+            return basinSizes;
+        }
+        int min = basinSizes.Min();
+        if (min < newSize)
+        {
+            basinSizes.Remove(min);
+            basinSizes.Add(newSize);
+        }
+        return basinSizes;
+    }
+
+    private static int GetOneBasinSize(int[,] map, int i, int j, previousDirection prevDirection)
+    {
+        int basinSize = 1;
+        if (prevDirection != previousDirection.down && i > 0 && map[i - 1, j] != 9)
+        {
+            basinSize += GetOneBasinSize(map, i - 1, j, previousDirection.above);
+        }
+        if (prevDirection != previousDirection.above && i < (map.GetLength(0) - 1) && map[i + 1, j] != 9)
+        {
+            basinSize += GetOneBasinSize(map, i + 1, j, previousDirection.down);
+        }
+        if (prevDirection != previousDirection.right && j > 0 && map[i, j - 1] != 9)
+        {
+            basinSize += GetOneBasinSize(map, i, j - 1, previousDirection.left);
+        }
+        if (prevDirection != previousDirection.left && j < (map.GetLength(1) - 1) && map[i, j + 1] != 9)
+        {
+            basinSize += GetOneBasinSize(map, i, j + 1, previousDirection.right);
+        }
+        return basinSize;
     }
 
     private static List<Coordinates> FindLowPoints(int[,] map)
@@ -96,30 +155,6 @@ public class AdventOfCodeDay9
         return map[i, j] < map[i + 1, j];
     }
 
-    private static void PrintSurroundingVals(int[,] map, int i, int j)
-    {
-        //Check right side
-        if (j < (map.GetLength(1) - 1))
-        {
-            Console.Write(" Right: " + map[i, j + 1]);
-        }
-        //Check left side
-        if (j > 0)
-        {
-            Console.Write(" Left: " + map[i, j - 1]);
-        }
-        //Check above
-        if (i > 0)
-        {
-            Console.Write(" Up: " + map[i - 1, j]);
-        }
-        //Check below
-        if (i < (map.GetLength(0) - 1))
-        {
-            Console.Write(" Down: " + map[i + 1, j]);
-        }
-    }
-
     private static int[,] BuildMap(string[] lines)
     {
         int[,] map = new int[lines.Length, lines[0].Length];
@@ -142,5 +177,14 @@ public class AdventOfCodeDay9
         }
         public int x;
         public int y;
+    }
+
+    public enum previousDirection
+    {
+        none,
+        left,
+        right,
+        above,
+        down
     }
 }
