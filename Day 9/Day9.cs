@@ -13,23 +13,40 @@ public class AdventOfCodeDay9
     private static int Problem1(string[] lines)
     {
         int[,] map = BuildMap(lines);
-        return FindLowPoints(map);
+        List<Coordinates> lowPoints = FindLowPoints(map);
+        return SumLowPoints(map, lowPoints);
     }
 
-    private static int FindLowPoints(int[,] map)
+    private static int Problem2(string[] lines)
     {
-        int lowPointSum = 0;
+        int[,] map = BuildMap(lines);
+        return 0;
+    }
+
+    private static List<Coordinates> FindLowPoints(int[,] map)
+    {
+        List<Coordinates> lowPoints = new List<Coordinates>();
         for (int i = 0; i < map.GetLength(0); i++)
         {
             for (int j = 0; j < map.GetLength(1); j++)
             {
                 if (IsLowPoint(map, i, j))
                 {
-                    lowPointSum += (map[i, j] + 1);
+                    lowPoints.Add(new Coordinates(i, j));
                 }
             }
         }
-        return lowPointSum;
+        return lowPoints;
+    }
+
+    private static int SumLowPoints(int[,] map, List<Coordinates> lowPoints)
+    {
+        int lowPointsSum = 0;
+        foreach (Coordinates lowPoint in lowPoints)
+        {
+            lowPointsSum += (map[lowPoint.x, lowPoint.y] + 1);
+        }
+        return lowPointsSum;
     }
 
     private static bool IsLowPoint(int[,] map, int i, int j)
@@ -111,5 +128,16 @@ public class AdventOfCodeDay9
             }
         }
         return map;
+    }
+
+    public class Coordinates
+    {
+        public Coordinates(int X, int Y)
+        {
+            x = X;
+            y = Y;
+        }
+        public int x;
+        public int y;
     }
 }
