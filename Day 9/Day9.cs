@@ -7,7 +7,9 @@ public class AdventOfCodeDay9
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 9/Problem1Input.txt");
         int sumOfLowSpots = Problem1(lines);
+        int areaOfLargestBasins = Problem2(lines);
         Console.WriteLine("Day 9 - Problem 1: The sum of the low spots is " + sumOfLowSpots);
+        Console.WriteLine("Day 9 - Problem 2: The area of the largest basins is: " + areaOfLargestBasins);
     }
 
     private static int Problem1(string[] lines)
@@ -20,6 +22,7 @@ public class AdventOfCodeDay9
     private static int Problem2(string[] lines)
     {
         int[,] map = BuildMap(lines);
+        List<Coordinates> lowPoints = FindLowPoints(map);
         return 0;
     }
 
