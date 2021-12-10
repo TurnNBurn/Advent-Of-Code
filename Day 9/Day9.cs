@@ -40,9 +40,10 @@ public class AdventOfCodeDay9
     private static List<int> GetBasinSizes(int[,] map, List<Coordinates> lowPoints)
     {
         List<int> basinSizes = new List<int>();
+        List<Coordinates> markedLocations = new List<Coordinates>();
         foreach (Coordinates lowPoint in lowPoints)
         {
-            basinSizes = TryAddBasinSize(basinSizes, GetOneBasinSize(map, lowPoint.x, lowPoint.y, previousDirection.none));
+            basinSizes = TryAddBasinSize(basinSizes, GetOneBasinSize(map, ref markedLocations, lowPoint.x, lowPoint.y));
         }
         return basinSizes;
     }
@@ -63,24 +64,29 @@ public class AdventOfCodeDay9
         return basinSizes;
     }
 
-    private static int GetOneBasinSize(int[,] map, int i, int j, previousDirection prevDirection)
+    private static int GetOneBasinSize(int[,] map, ref List<Coordinates> markedLocations, int i, int j)
     {
+        if (markedLocations.Contains(new Coordinates(i, j)))
+        {
+            return 0;
+        }
+        markedLocations.Add(new Coordinates(i, j));
         int basinSize = 1;
-        if (prevDirection != previousDirection.down && i > 0 && map[i - 1, j] != 9)
+        if (i > 0 && map[i - 1, j] != 9)
         {
-            basinSize += GetOneBasinSize(map, i - 1, j, previousDirection.above);
+            basinSize += GetOneBasinSize(map, ref markedLocations, i - 1, j);
         }
-        if (prevDirection != previousDirection.above && i < (map.GetLength(0) - 1) && map[i + 1, j] != 9)
+        if (i < (map.GetLength(0) - 1) && map[i + 1, j] != 9)
         {
-            basinSize += GetOneBasinSize(map, i + 1, j, previousDirection.down);
+            basinSize += GetOneBasinSize(map, ref markedLocations, i + 1, j);
         }
-        if (prevDirection != previousDirection.right && j > 0 && map[i, j - 1] != 9)
+        if (j > 0 && map[i, j - 1] != 9)
         {
-            basinSize += GetOneBasinSize(map, i, j - 1, previousDirection.left);
+            basinSize += GetOneBasinSize(map, ref markedLocations, i, j - 1);
         }
-        if (prevDirection != previousDirection.left && j < (map.GetLength(1) - 1) && map[i, j + 1] != 9)
+        if (j < (map.GetLength(1) - 1) && map[i, j + 1] != 9)
         {
-            basinSize += GetOneBasinSize(map, i, j + 1, previousDirection.right);
+            basinSize += GetOneBasinSize(map, ref markedLocations, i, j + 1);
         }
         return basinSize;
     }
@@ -175,16 +181,22 @@ public class AdventOfCodeDay9
             x = X;
             y = Y;
         }
+
+        public override bool Equals(object? obj)
+        {
+            return Equals(obj as Coordinates);
+        }
+
+        public bool Equals(Coordinates? other)
+        {
+            return other != null && other.x == x && other.y == y;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(x, y);
+        }
         public int x;
         public int y;
-    }
-
-    public enum previousDirection
-    {
-        none,
-        left,
-        right,
-        above,
-        down
     }
 }
