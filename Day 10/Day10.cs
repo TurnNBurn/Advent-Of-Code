@@ -12,16 +12,20 @@ public class AdventOfCodeDay10
 
     private static int Problem1(string[] lines)
     {
-        List<char> corruptedChars = new List<char>();
+        int corruptedSum = 0;
         foreach (string line in lines)
         {
-            corruptedChars = CheckForCorruption(line, corruptedChars);
+            if (CheckForCorruption(line, out char corruptedChar))
+            {
+                corruptedSum += CorruptedCharValues[corruptedChar];
+            }
         }
-        return SumCorruptedChars(corruptedChars);
+        return corruptedSum;
     }
 
-    private static List<char> CheckForCorruption(string line, List<char> corruptedChars)
+    private static bool CheckForCorruption(string line, out char corruptedChar)
     {
+        corruptedChar = ' '; //Hacky and I don't like it
         Stack<char> chunk = new Stack<char>();
         for (int i = 0; i < line.Length; i++)
         {
@@ -49,25 +53,15 @@ public class AdventOfCodeDay10
                     }
                     else
                     {
-                        corruptedChars.Add(line[i]);
-                        return corruptedChars;
+                        corruptedChar = line[i];
+                        return true;
                     }
                     break;
                 default:
                     break;
             }
         }
-        return corruptedChars;
-    }
-
-    private static int SumCorruptedChars(List<char> corruptedChars)
-    {
-        int sum = 0;
-        foreach (char corrupted in corruptedChars)
-        {
-            sum += CorruptedCharValues[corrupted];
-        }
-        return sum;
+        return false;
     }
 
     private static Dictionary<char, char> CloseBracketPairs = new Dictionary<char, char>{
