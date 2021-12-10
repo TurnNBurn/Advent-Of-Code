@@ -12,6 +12,7 @@ class AdventOfCode
         AdventOfCodeDay7.run();
         AdventOfCodeDay8.run();
         AdventOfCodeDay9.run();
+        AdventOfCodeDay10.run();
     }
 
 }
