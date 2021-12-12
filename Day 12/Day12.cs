@@ -7,27 +7,35 @@ public class AdventOfCodeDay12
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 12/Problem1Input.txt");
         int totalPaths = Problem1(lines);
+        int totalPathsWithRevisiting = Problem2(lines);
         Console.WriteLine("Day 12 - Problem 1: There are " + totalPaths + " distinct paths to the exit.");
+        Console.WriteLine("Day 12 - Problem 2: There are " + totalPathsWithRevisiting + " distinct paths that include revisiting a small room");
     }
 
     private static int Problem1(string[] lines)
     {
         Dictionary<string, List<string>> caveMap = BuildMap(lines);
-        return FindPaths(caveMap);
+        return FindPaths(caveMap, false);
     }
 
-    private static int FindPaths(Dictionary<string, List<string>> caveMap)
+    private static int Problem2(string[] lines)
+    {
+        Dictionary<string, List<string>> caveMap = BuildMap(lines);
+        return FindPaths(caveMap, true);
+    }
+
+    private static int FindPaths(Dictionary<string, List<string>> caveMap, bool canRevisit)
     {
         int numPaths = 0;
         List<string> startPaths = caveMap["start"];
         foreach (string nextRoom in startPaths)
         {
-            numPaths += BuildPaths(caveMap, "start," + nextRoom);
+            numPaths += BuildPaths(caveMap, "start," + nextRoom, canRevisit);
         }
         return numPaths;
     }
 
-    private static int BuildPaths(Dictionary<string, List<string>> caveMap, string path)
+    private static int BuildPaths(Dictionary<string, List<string>> caveMap, string path, bool canRevisit)
     {
         int numPaths = 0;
         string lastRoom = path.Split(',').Last();
@@ -42,9 +50,24 @@ public class AdventOfCodeDay12
             {
                 numPaths++;
             }
-            else if (!nextRoom.Any(char.IsLower) || !path.Contains(nextRoom))
+            else if (nextRoom.Any(char.IsLower))
             {
-                numPaths += BuildPaths(caveMap, path + "," + nextRoom);
+                if (path.Contains(nextRoom))
+                {
+                    if (canRevisit && !nextRoom.Equals("start"))
+                    {
+                        //numPaths += BuildPaths(caveMap, path, true);
+                        numPaths += BuildPaths(caveMap, path + "," + nextRoom, false);
+                    }
+                }
+                else
+                {
+                    numPaths += BuildPaths(caveMap, path + "," + nextRoom, canRevisit);
+                }
+            }
+            else
+            {
+                numPaths += BuildPaths(caveMap, path + "," + nextRoom, canRevisit);
             }
         }
         return numPaths;
