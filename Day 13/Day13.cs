@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 public class AdventOfCodeDay13
 {
@@ -7,15 +8,74 @@ public class AdventOfCodeDay13
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 13/Problem1Input.txt");
         int totalDots = Problem1(lines);
+        Problem2(lines);
         Console.WriteLine("Day 13 - Problem 1: There are " + totalDots + " after folding the paper once.");
+        //Console.WriteLine("Day 13 - Problem 2: After folding the paper the code to enter is " + finalCode);
     }
 
     private static int Problem1(string[] lines)
     {
         List<Coordinates> dots = ParseCoordinates(lines);
         List<string> foldInstructions = ParseFoldInstructions(lines, dots.Count);
-        dots = FoldPaper(dots, foldInstructions);
+        dots = DoOneFold(dots, foldInstructions[0]);
         return dots.Count;
+    }
+
+    private static void PrintDots(List<Coordinates> dots)
+    {
+        Dictionary<int, List<int>> dotMap = new Dictionary<int, List<int>>();
+        int maxX = 0;
+        int maxY = 0;
+        foreach (Coordinates dot in dots)
+        {
+            maxX = dot.x > maxX ? dot.x : maxX;
+            maxY = dot.y > maxY ? dot.y : maxY;
+            if (dotMap.ContainsKey(dot.y))
+            {
+                dotMap[dot.y].Add(dot.x);
+            }
+            else
+            {
+                dotMap.Add(dot.y, new List<int>());
+                dotMap[dot.y].Add(dot.x);
+            }
+        }
+
+        string[] graphicMap = new string[maxY + 1];
+        for (int i = 0; i <= maxY; i++)
+        {
+            StringBuilder mapLine = new StringBuilder("");
+            if (dotMap.ContainsKey(i))
+            {
+
+                for (int j = 0; j <= maxX; j++)
+                {
+                    if (dotMap[i].Contains(j))
+                    {
+                        mapLine.Append('#');
+                    }
+                    else
+                    {
+                        mapLine.Append('.');
+                    }
+                }
+            }
+            else
+            {
+                mapLine.Append('.', 100);
+            }
+            graphicMap[i] = mapLine.ToString();
+        }
+        File.WriteAllLinesAsync("./Day 13/Problem2Output.txt", graphicMap);
+    }
+
+    private static void Problem2(string[] lines)
+    {
+        List<Coordinates> dots = ParseCoordinates(lines);
+        List<string> foldInstructions = ParseFoldInstructions(lines, dots.Count);
+        dots = FoldPaper(dots, foldInstructions);
+        PrintDots(dots);
+        ;
     }
 
     private static List<Coordinates> ParseCoordinates(string[] lines)
@@ -47,7 +107,7 @@ public class AdventOfCodeDay13
 
     private static List<Coordinates> FoldPaper(List<Coordinates> dots, List<string> foldInstructions)
     {
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < foldInstructions.Count; i++)
         {
             dots = DoOneFold(dots, foldInstructions[i]);
         }
