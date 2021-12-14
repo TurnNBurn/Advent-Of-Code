@@ -8,24 +8,22 @@ public class AdventOfCodeDay14
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 14/Problem1Input.txt");
         int tenInsertions = Problem1(lines);
-        int fortyInsertions = Problem2(lines);
-        Console.WriteLine("Day 14 - Problem 1: The most common element minus the least common element after ten insertions is " + tenInsertions);
-        Console.WriteLine("Day 14 - Problem 2: The most common element minus the least common element after forty insertions is " + fortyInsertions);
+        //int fortyInsertions = Problem2(lines);
+        Console.WriteLine("Day 14 - Problem 1: The most common element minus the least common element after 10 insertions is " + tenInsertions);
+        //Console.WriteLine("Day 14 - Problem 2: The most common element minus the least common element after forty insertions is " + fortyInsertions);
     }
 
     private static int Problem1(string[] lines)
     {
-        StringBuilder polymer = new StringBuilder(lines[0]);
         Dictionary<string, char> insertions = ParseInsertionRules(lines);
-        Dictionary<char, int> elementCount = PerformTenInsertions(polymer, insertions);
+        Dictionary<char, int> elementCount = PerformTenInsertions(lines[0], insertions);
         return DiffMaxMin(elementCount);
     }
 
     private static int Problem2(string[] lines)
     {
-        StringBuilder polymer = new StringBuilder(lines[0]);
         Dictionary<string, char> insertions = ParseInsertionRules(lines);
-        Dictionary<char, int> elementCount = PerformFortyInsertions(polymer, insertions);
+        Dictionary<char, int> elementCount = PerformFortyInsertions(lines[0], insertions);
         return DiffMaxMin(elementCount);
     }
 
@@ -43,40 +41,42 @@ public class AdventOfCodeDay14
         return insertions;
     }
 
-    private static Dictionary<char, int> PerformTenInsertions(StringBuilder polymer, Dictionary<string, char> insertions)
+    private static Dictionary<char, int> PerformTenInsertions(string polymer, Dictionary<string, char> insertions)
     {
         Dictionary<char, int> elementCount = SetupElementCount(polymer);
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < polymer.Length - 1; i++)
         {
-            PerformOneInsertion(polymer, insertions, elementCount);
+            TraverseOnePair(new string(polymer[i].ToString() + polymer[i + 1].ToString()), insertions, elementCount, 0, 10);
         }
         return elementCount;
     }
 
-    private static Dictionary<char, int> PerformFortyInsertions(StringBuilder polymer, Dictionary<string, char> insertions)
+    private static Dictionary<char, int> PerformFortyInsertions(string polymer, Dictionary<string, char> insertions)
     {
         Dictionary<char, int> elementCount = SetupElementCount(polymer);
-        for (int i = 0; i < 40; i++)
+        for (int i = 0; i < polymer.Length - 1; i++)
         {
-            PerformOneInsertion(polymer, insertions, elementCount);
+            TraverseOnePair(new string(polymer[i].ToString() + polymer[i + 1].ToString()), insertions, elementCount, 0, 40);
         }
         return elementCount;
     }
 
-    private static void PerformOneInsertion(StringBuilder polymer, Dictionary<string, char> insertions, Dictionary<char, int> elementCount)
+    private static void TraverseOnePair(string pair, Dictionary<string, char> insertions, Dictionary<char, int> elementCount, int numIterations, int limit)
     {
-        for (int i = 0; i < polymer.Length - 1; i += 2)
+        if (numIterations == limit)
         {
-            if (insertions.ContainsKey(polymer.ToString().Substring(i, 2)))
-            {
-                char element = insertions[polymer.ToString().Substring(i, 2)];
-                polymer.Insert(i + 1, element);
-                AddElementCount(elementCount, element);
-            }
+            return;
+        }
+        if (insertions.ContainsKey(pair))
+        {
+            char newElement = insertions[pair];
+            AddElementCount(elementCount, insertions[pair]);
+            TraverseOnePair(new string(pair[0] + newElement.ToString()), insertions, elementCount, numIterations + 1, limit);
+            TraverseOnePair(new string(newElement.ToString() + pair[1]), insertions, elementCount, numIterations + 1, limit);
         }
     }
 
-    private static Dictionary<char, int> SetupElementCount(StringBuilder polymer)
+    private static Dictionary<char, int> SetupElementCount(string polymer)
     {
         Dictionary<char, int> elementCount = new Dictionary<char, int>();
         for (int i = 0; i < polymer.Length; i++)
