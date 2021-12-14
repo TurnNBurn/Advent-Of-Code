@@ -7,27 +7,34 @@ public class AdventOfCodeDay14
     public static void run()
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 14/Problem1Input.txt");
-        int tenInsertions = Problem1(lines);
+        long tenInsertions = Problem1(lines);
         long fortyInsertions = Problem2(lines);
         Console.WriteLine("Day 14 - Problem 1: The most common element minus the least common element after 10 insertions is " + tenInsertions);
         Console.WriteLine("Day 14 - Problem 2: The most common element minus the least common element after forty insertions is " + fortyInsertions);
     }
 
-    private static int Problem1(string[] lines)
+    private static long Problem1(string[] lines)
     {
         Dictionary<string, char> insertions = ParseInsertionRules(lines);
-        Dictionary<char, int> elementCount = PerformTenInsertions(lines[0], insertions);
+        Dictionary<string, long> pairCount = PerformInsertions(lines[0], insertions, 10);
+        Dictionary<char, long> elementCount = ConvertPairCountToElementCount(pairCount);
+        //Every element will always be part of two pairs - except the first and last element
+        //Add one to each of their counts to compensate for dividing by two earlier
+        AddElementLong(elementCount, lines[0][0], 1);
+        AddElementLong(elementCount, lines[0][lines[0].Length - 1], 1);
         return DiffMaxMin(elementCount);
     }
 
     private static long Problem2(string[] lines)
     {
         Dictionary<string, char> insertions = ParseInsertionRules(lines);
-        Dictionary<string, long> pairCount = PerformFortyInsertions(lines[0], insertions);
+        Dictionary<string, long> pairCount = PerformInsertions(lines[0], insertions, 40);
         Dictionary<char, long> elementCount = ConvertPairCountToElementCount(pairCount);
+        //Every element will always be part of two pairs - except the first and last element
+        //Add one to each of their counts to compensate for dividing by two earlier
         AddElementLong(elementCount, lines[0][0], 1);
         AddElementLong(elementCount, lines[0][lines[0].Length - 1], 1);
-        return DiffMaxMinLong(elementCount);
+        return DiffMaxMin(elementCount);
     }
 
     private static Dictionary<string, char> ParseInsertionRules(string[] lines)
@@ -44,20 +51,10 @@ public class AdventOfCodeDay14
         return insertions;
     }
 
-    private static Dictionary<char, int> PerformTenInsertions(string polymer, Dictionary<string, char> insertions)
-    {
-        Dictionary<char, int> elementCount = SetupElementCount(polymer);
-        for (int i = 0; i < polymer.Length - 1; i++)
-        {
-            TraverseOnePair(new string(polymer[i].ToString() + polymer[i + 1].ToString()), insertions, elementCount, 0, 10);
-        }
-        return elementCount;
-    }
-
-    private static Dictionary<string, long> PerformFortyInsertions(string polymer, Dictionary<string, char> insertions)
+    private static Dictionary<string, long> PerformInsertions(string polymer, Dictionary<string, char> insertions, int count)
     {
         Dictionary<string, long> pairCount = SetupPairCount(polymer);
-        for (int i = 0; i < 40; i++)
+        for (int i = 0; i < count; i++)
         {
             pairCount = ComputeNewPairCount(pairCount, insertions);
         }
@@ -107,16 +104,6 @@ public class AdventOfCodeDay14
         }
     }
 
-    private static Dictionary<char, int> SetupElementCount(string polymer)
-    {
-        Dictionary<char, int> elementCount = new Dictionary<char, int>();
-        for (int i = 0; i < polymer.Length; i++)
-        {
-            AddElementCount(elementCount, polymer[i], 1);
-        }
-        return elementCount;
-    }
-
     private static Dictionary<string, long> SetupPairCount(string polymer)
     {
         Dictionary<string, long> pairCount = new Dictionary<string, long>();
@@ -164,25 +151,7 @@ public class AdventOfCodeDay14
         }
     }
 
-    private static int DiffMaxMin(Dictionary<char, int> elementCount)
-    {
-        int min = 0;
-        int max = 0;
-        foreach (KeyValuePair<char, int> element in elementCount)
-        {
-            if (min == 0 || element.Value < min)
-            {
-                min = element.Value;
-            }
-            if (element.Value > max)
-            {
-                max = element.Value;
-            }
-        }
-        return max - min;
-    }
-
-    private static long DiffMaxMinLong(Dictionary<char, long> elementCount)
+    private static long DiffMaxMin(Dictionary<char, long> elementCount)
     {
         long min = 0;
         long max = 0;
