@@ -7,15 +7,25 @@ public class AdventOfCodeDay14
     public static void run()
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 14/Problem1Input.txt");
-        int mostCommonMinusLeastCommon = Problem1(lines);
-        Console.WriteLine("Day 14 - Problem 1: The most common element minus the least common element is " + mostCommonMinusLeastCommon);
+        int tenInsertions = Problem1(lines);
+        int fortyInsertions = Problem2(lines);
+        Console.WriteLine("Day 14 - Problem 1: The most common element minus the least common element after ten insertions is " + tenInsertions);
+        Console.WriteLine("Day 14 - Problem 2: The most common element minus the least common element after forty insertions is " + fortyInsertions);
     }
 
     private static int Problem1(string[] lines)
     {
         StringBuilder polymer = new StringBuilder(lines[0]);
         Dictionary<string, char> insertions = ParseInsertionRules(lines);
-        Dictionary<char, int> elementCount = PerformInsertions(polymer, insertions);
+        Dictionary<char, int> elementCount = PerformTenInsertions(polymer, insertions);
+        return DiffMaxMin(elementCount);
+    }
+
+    private static int Problem2(string[] lines)
+    {
+        StringBuilder polymer = new StringBuilder(lines[0]);
+        Dictionary<string, char> insertions = ParseInsertionRules(lines);
+        Dictionary<char, int> elementCount = PerformFortyInsertions(polymer, insertions);
         return DiffMaxMin(elementCount);
     }
 
@@ -33,17 +43,27 @@ public class AdventOfCodeDay14
         return insertions;
     }
 
-    private static Dictionary<char, int> PerformInsertions(StringBuilder polymer, Dictionary<string, char> insertions)
+    private static Dictionary<char, int> PerformTenInsertions(StringBuilder polymer, Dictionary<string, char> insertions)
     {
         Dictionary<char, int> elementCount = SetupElementCount(polymer);
         for (int i = 0; i < 10; i++)
         {
-            PerformInsertions(polymer, insertions, elementCount);
+            PerformOneInsertion(polymer, insertions, elementCount);
         }
         return elementCount;
     }
 
-    private static void PerformInsertions(StringBuilder polymer, Dictionary<string, char> insertions, Dictionary<char, int> elementCount)
+    private static Dictionary<char, int> PerformFortyInsertions(StringBuilder polymer, Dictionary<string, char> insertions)
+    {
+        Dictionary<char, int> elementCount = SetupElementCount(polymer);
+        for (int i = 0; i < 40; i++)
+        {
+            PerformOneInsertion(polymer, insertions, elementCount);
+        }
+        return elementCount;
+    }
+
+    private static void PerformOneInsertion(StringBuilder polymer, Dictionary<string, char> insertions, Dictionary<char, int> elementCount)
     {
         for (int i = 0; i < polymer.Length - 1; i += 2)
         {
