@@ -7,36 +7,97 @@ public class AdventOfCodeDay15
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 15/Problem1Input.txt");
         int totalRisk = Problem1(lines);
+        int riskOfFullCave = Problem2(lines);
         Console.WriteLine("Day 15 - Problem 1: The lowest total risk out of the cave is " + totalRisk);
+        Console.WriteLine("Day 15 - Problem 2: The total risk of traversing the entire cave is " + riskOfFullCave);
     }
 
     private static int Problem1(string[] lines)
     {
         int[,] caveMap = BuildCaveMap(lines);
-        return Math.Min(MoveOne(caveMap, 0, 1), MoveOne(caveMap, 1, 0));
+        int[,] distanceMap = new int[caveMap.GetLength(0), caveMap.GetLength(1)];
+        if (caveMap[0, 1] <= caveMap[1, 0])
+        {
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(0, 1));
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(1, 0));
+        }
+        else
+        {
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(1, 0));
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(0, 1));
+        }
+        return distanceMap[distanceMap.GetLength(0) - 1, distanceMap.GetLength(1) - 1];
     }
 
-    private static int MoveOne(int[,] caveMap, int i, int j)
+    private static int Problem2(string[] lines)
     {
-        int currentRisk = caveMap[i, j];
+        int[,] caveMap = BuildCaveMap(lines);
+        int[,] distanceMap = new int[caveMap.GetLength(0), caveMap.GetLength(1)];
+        if (caveMap[0, 1] <= caveMap[1, 0])
+        {
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(0, 1));
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(1, 0));
+        }
+        else
+        {
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(1, 0));
+            MoveOne(caveMap, distanceMap, 0, new Coordinates(0, 1));
+        }
+        return distanceMap[distanceMap.GetLength(0) - 1, distanceMap.GetLength(1) - 1];
+    }
+
+    private static void MoveOne(int[,] caveMap, int[,] distanceMap, int distance, Coordinates spot)
+    {
+        int currentRisk = caveMap[spot.x, spot.y];
+        //Console.WriteLine(spot.x + " " + spot.y + " distance " + distance);
+        distance = distance + currentRisk;
+        if (distanceMap[spot.x, spot.y] != 0)
+        {
+            if (distanceMap[spot.x, spot.y] < distance)
+            {
+                return;
+            }
+        }
+        //We found the shortest distance here so far, record that
+        distanceMap[spot.x, spot.y] = distance;
+
+        //Check if we're at the destination
         int caveLength = caveMap.GetLength(0) - 1;
         int caveWidth = caveMap.GetLength(1) - 1;
-        if (i == caveLength && j == caveWidth)
+        if (spot.x == caveLength && spot.y == caveWidth)
         {
-            //Console.WriteLine(currentRisk);
-            return currentRisk;
+            return;
         }
-        int nextRisk = 0;
-        if (i < caveLength)
+
+        bool canGoRight = spot.x < caveLength;
+        bool canGoDown = spot.y < caveWidth;
+        //Search neighbors
+        if (canGoDown)
         {
-            nextRisk = MoveOne(caveMap, i + 1, j);
+            Coordinates downNeighbor = new Coordinates(spot.x, spot.y + 1);
+            if (canGoRight)
+            {
+                Coordinates rightNeighbor = new Coordinates(spot.x + 1, spot.y);
+                if (caveMap[spot.x + 1, spot.y] <= caveMap[spot.x, spot.y + 1])
+                {
+                    MoveOne(caveMap, distanceMap, distance, rightNeighbor);
+                    MoveOne(caveMap, distanceMap, distance, downNeighbor);
+                }
+                else
+                {
+                    MoveOne(caveMap, distanceMap, distance, downNeighbor);
+                    MoveOne(caveMap, distanceMap, distance, rightNeighbor);
+                }
+            }
+            else
+            {
+                MoveOne(caveMap, distanceMap, distance, downNeighbor);
+            }
         }
-        if (j < caveWidth)
+        else if (canGoRight)
         {
-            int rightRisk = MoveOne(caveMap, i, j + 1);
-            nextRisk = nextRisk == 0 ? rightRisk : Math.Min(nextRisk, rightRisk);
+            MoveOne(caveMap, distanceMap, distance, new Coordinates(spot.x + 1, spot.y));
         }
-        return currentRisk + nextRisk;
     }
 
     private static int[,] BuildCaveMap(string[] lines)
@@ -52,4 +113,30 @@ public class AdventOfCodeDay15
         }
         return caveMap;
     }
+}
+
+public class Coordinates
+{
+    public Coordinates(int X, int Y)
+    {
+        x = X;
+        y = Y;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Coordinates);
+    }
+
+    public bool Equals(Coordinates? other)
+    {
+        return other != null && other.x == x && other.y == y;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(x, y);
+    }
+    public int x;
+    public int y;
 }
