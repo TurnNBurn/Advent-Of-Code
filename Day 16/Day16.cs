@@ -7,16 +7,69 @@ public class AdventOfCodeDay16
     public static void run()
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 16/Problem1Input.txt");
-        int totalRisk = Problem1(lines);
-        Console.WriteLine("Day 16 - Problem 1: The sum of all the packet versions is " + totalRisk);
+        int versionSum = Problem1(lines);
+        long packetExpression = Problem2(lines);
+        Console.WriteLine("Day 16 - Problem 1: The sum of all the packet versions is " + versionSum);
+        Console.WriteLine("Day 16 - Problem 2: The expression evaluates to " + packetExpression);
     }
 
     private static int Problem1(string[] lines)
     {
         string binaryString = ParseHexToBinary(lines[0]);
         List<Packet> packets = ParseBinary(binaryString);
-        PrintPackets(packets);
         return SumVersions(packets);
+    }
+
+    private static long Problem2(string[] lines)
+    {
+        string binaryString = ParseHexToBinary(lines[0]);
+        List<Packet> packets = ParseBinary(binaryString);
+        return EvaluatePacketByType(packets[0]);
+    }
+
+    private static long EvaluatePacketByType(Packet pack)
+    {
+        switch (pack.Type)
+        {
+            case 0:
+                long sum = 0;
+                foreach (Packet subPacket in pack.SubPackets)
+                {
+                    sum += EvaluatePacketByType(subPacket);
+                }
+                return sum;
+            case 1:
+                long product = 1;
+                foreach (Packet subPacket in pack.SubPackets)
+                {
+                    product *= EvaluatePacketByType(subPacket);
+                }
+                return product;
+            case 2:
+                long min = long.MaxValue;
+                foreach (Packet subPacket in pack.SubPackets)
+                {
+                    min = Math.Min(min, EvaluatePacketByType(subPacket));
+                }
+                return min;
+            case 3:
+                long max = 0;
+                foreach (Packet subPacket in pack.SubPackets)
+                {
+                    max = Math.Max(max, EvaluatePacketByType(subPacket));
+                }
+                return max;
+            case 4:
+                return pack.Literal;
+            case 5:
+                return EvaluatePacketByType(pack.SubPackets[0]) > EvaluatePacketByType(pack.SubPackets[1]) ? 1 : 0;
+            case 6:
+                return EvaluatePacketByType(pack.SubPackets[0]) < EvaluatePacketByType(pack.SubPackets[1]) ? 1 : 0;
+            case 7:
+                return EvaluatePacketByType(pack.SubPackets[0]) == EvaluatePacketByType(pack.SubPackets[1]) ? 1 : 0;
+            default:
+                return 0;
+        }
     }
 
     private static int SumVersions(List<Packet> packetList)
@@ -31,24 +84,6 @@ public class AdventOfCodeDay16
             }
         }
         return sum;
-    }
-
-    private static void PrintPackets(List<Packet> packetList)
-    {
-        foreach (Packet pack in packetList)
-        {
-            Console.Write(" Packet version " + pack.Version + " type " + pack.Type);
-            if (pack.Type == 4)
-            {
-                Console.Write(" literal: " + pack.Literal);
-                Console.Write("\n");
-            }
-            else
-            {
-                Console.Write(" subpackets: \n");
-                PrintPackets(pack.SubPackets);
-            }
-        }
     }
 
     private static List<Packet> ParseBinary(string binary)
@@ -66,27 +101,23 @@ public class AdventOfCodeDay16
             Packet pack = ParseNextPacket(binary, ref index);
             packets.Add(pack);
         }
-        //PrintPackets(packets);
         return packets;
     }
 
     private static Packet ParseNextPacket(string binary, ref int index)
     {
-        Console.WriteLine(binary + " length " + binary.Length + " index " + index);
         int version = Convert.ToInt32(binary.Substring(index, 3), 2);
         index += 3;
         int type = Convert.ToInt32(binary.Substring(index, 3), 2);
         index += 3;
         if (type == 4)
         {
-            Console.WriteLine("Parsing literal");
             Packet literal = new Packet(version, type);
             index = ParseLiteral(binary, index, literal);
             return literal;
         }
         else
         {
-            Console.WriteLine("Parsing operator");
             index = ParseOperator(binary, index, out List<Packet> subPackets);
             return new Packet(version, type, subPackets);
         }
@@ -107,8 +138,7 @@ public class AdventOfCodeDay16
             }
             index += 5;
         }
-        //literal.Literal = Convert.ToInt32(sb.ToString(), 2);
-        //int packetLength = index - startIndex - 5;
+        literal.Literal = Convert.ToInt64(sb.ToString(), 2);
         return index;
     }
 
@@ -139,7 +169,6 @@ public class AdventOfCodeDay16
 
     private static string ParseHexToBinary(string hex)
     {
-        Console.WriteLine(hex.Length);
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < hex.Length; i++)
         {
@@ -172,7 +201,7 @@ public class Packet
 {
     public int Version;
     public int Type;
-    public int Literal;
+    public long Literal;
     public List<Packet> SubPackets;
 
     public Packet(int version, int type)
