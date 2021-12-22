@@ -6,14 +6,23 @@ public class AdventOfCodeDay17
     public static void run()
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 17/Problem1Input.txt");
-        int versionSum = Problem1(lines);
-        Console.WriteLine("Day 17 - Problem 1: The highest y point acheived is " + versionSum);
+        int maxY = Problem1(lines);
+        int numVelocities = Problem2(lines);
+        Console.WriteLine("Day 17 - Problem 1: The highest y point acheived is " + maxY);
+        Console.WriteLine("Day 17 - Problem 2: There are " + numVelocities + " distinct initial velocities");
     }
 
     private static int Problem1(string[] lines)
     {
         List<Coordinates> targetRange = ParseInput(lines);
         return FindMaxY(targetRange);
+    }
+
+    private static int Problem2(string[] lines)
+    {
+        List<Coordinates> targetRange = ParseInput(lines);
+        List<Coordinates> possibleVelocities = FindAllPossibleVelocities(targetRange);
+        return possibleVelocities.Count;
     }
 
     private static int FindMaxY(List<Coordinates> targetRange)
@@ -35,6 +44,25 @@ public class AdventOfCodeDay17
         return yMax;
     }
 
+    private static List<Coordinates> FindAllPossibleVelocities(List<Coordinates> targetRange)
+    {
+        List<Coordinates> possibileInitialVelocities = new List<Coordinates>();
+        for (int x = 0; x <= targetRange[1].x; x++)
+        {
+            if (MaxX(x) > targetRange[0].x)
+            {
+                for (int y = targetRange[0].y; y < 1000; y++)
+                {
+                    if (VelocityInRange(x, y, targetRange))
+                    {
+                        possibileInitialVelocities.Add(new Coordinates(x, y));
+                    }
+                }
+            }
+        }
+        return possibileInitialVelocities;
+    }
+
     private static bool VelocityInRange(int x, int y, List<Coordinates> targetRange)
     {
         bool passedRange = false;
@@ -53,7 +81,7 @@ public class AdventOfCodeDay17
             {
                 return true;
             }
-            if (xSum > targetRange[1].x || ySum < targetRange[1].y)
+            if (xSum > targetRange[1].x || ySum < targetRange[0].y)
             {
                 passedRange = true;
             }
