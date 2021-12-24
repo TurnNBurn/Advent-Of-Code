@@ -23,11 +23,11 @@ public class AdventOfCodeDay22
 
             if (input[0].Equals("on"))
             {
-                TurnCubesOn(low, high, cubesOn, true);
+                TurnCubesOn(low, high, cubesOn);
             }
             else
             {
-                TurnCubesOff(low, high, cubesOn, true);
+                TurnCubesOff(low, high, cubesOn);
             }
         }
         return cubesOn.Count;
@@ -42,41 +42,33 @@ public class AdventOfCodeDay22
             Coordinate low = GetLowerRange(input[1]);
             Coordinate high = GetUpperRange(input[1]);
 
-            if (input[0].Equals("on"))
-            {
-                TurnCubesOn(low, high, cubesOn, false);
-            }
-            else
-            {
-                TurnCubesOff(low, high, cubesOn, false);
-            }
+
         }
         return cubesOn.Count;
     }
 
-    private static void TurnCubesOn(Coordinate low, Coordinate high, Dictionary<Coordinate, int> cubesOn, bool initilizationZone)
+    private static void TurnCubesOn(Coordinate low, Coordinate high, Dictionary<Coordinate, int> cubesOn)
     {
-        if (initilizationZone)
+
+        if (low.x > 50 || high.x < -50)
         {
-            if (low.x > 50 || high.x < -50)
-            {
-                return;
-            }
-            if (low.y > 50 || high.x < -50)
-            {
-                return;
-            }
-            if (low.z > 50 || high.z < -50)
-            {
-                return;
-            }
-            low.x = low.x > -50 ? low.x : -50;
-            low.y = low.y > -50 ? low.y : -50;
-            low.z = low.z > -50 ? low.z : -50;
-            high.x = high.x < 50 ? high.x : 50;
-            high.y = high.y < 50 ? high.y : 50;
-            high.z = high.z < 50 ? high.z : 50;
+            return;
         }
+        if (low.y > 50 || high.x < -50)
+        {
+            return;
+        }
+        if (low.z > 50 || high.z < -50)
+        {
+            return;
+        }
+        low.x = low.x > -50 ? low.x : -50;
+        low.y = low.y > -50 ? low.y : -50;
+        low.z = low.z > -50 ? low.z : -50;
+        high.x = high.x < 50 ? high.x : 50;
+        high.y = high.y < 50 ? high.y : 50;
+        high.z = high.z < 50 ? high.z : 50;
+
         for (int i = low.x; i <= high.x; i++)
         {
             for (int j = low.y; j <= high.y; j++)
@@ -94,29 +86,28 @@ public class AdventOfCodeDay22
         }
     }
 
-    private static void TurnCubesOff(Coordinate low, Coordinate high, Dictionary<Coordinate, int> cubesOn, bool initilizationZone)
+    private static void TurnCubesOff(Coordinate low, Coordinate high, Dictionary<Coordinate, int> cubesOn)
     {
-        if (initilizationZone)
+
+        if (low.x > 50 || high.x < -50)
         {
-            if (low.x > 50 || high.x < -50)
-            {
-                return;
-            }
-            if (low.y > 50 || high.x < -50)
-            {
-                return;
-            }
-            if (low.z > 50 || high.z < -50)
-            {
-                return;
-            }
-            low.x = low.x > -50 ? low.x : -50;
-            low.y = low.y > -50 ? low.y : -50;
-            low.z = low.z > -50 ? low.z : -50;
-            high.x = high.x < 50 ? high.x : 50;
-            high.y = high.y < 50 ? high.y : 50;
-            high.z = high.z < 50 ? high.z : 50;
+            return;
         }
+        if (low.y > 50 || high.x < -50)
+        {
+            return;
+        }
+        if (low.z > 50 || high.z < -50)
+        {
+            return;
+        }
+        low.x = low.x > -50 ? low.x : -50;
+        low.y = low.y > -50 ? low.y : -50;
+        low.z = low.z > -50 ? low.z : -50;
+        high.x = high.x < 50 ? high.x : 50;
+        high.y = high.y < 50 ? high.y : 50;
+        high.z = high.z < 50 ? high.z : 50;
+
         for (int i = low.x; i <= high.x; i++)
         {
             for (int j = low.y; j <= high.y; j++)
