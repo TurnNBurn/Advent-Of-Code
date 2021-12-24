@@ -37,25 +37,6 @@ public class AdventOfCodeDay20
         return CountLitPixels(image);
     }
 
-    private static void PrintImage(string[,] image)
-    {
-        for (int i = 0; i < image.GetLength(0); i++)
-        {
-            for (int j = 0; j < image.GetLength(1); j++)
-            {
-                if (image[i, j].Equals("0"))
-                {
-                    Console.Write(".");
-                }
-                if (image[i, j].Equals("1"))
-                {
-                    Console.Write("#");
-                }
-            }
-            Console.Write("\n");
-        }
-    }
-
     private static int CountLitPixels(string[,] image)
     {
         int numLitPixels = 0;
