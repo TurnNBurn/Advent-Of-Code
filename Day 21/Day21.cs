@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 
 public class AdventOfCodeDay21
 {
