@@ -7,9 +7,9 @@ public class AdventOfCodeDay22
     {
         string[] lines = System.IO.File.ReadAllLines("./Day 22/Problem1Input.txt");
         int cubesOn = Problem1(lines);
-        int cubesOnEntireZone = Problem2(lines);
+        long cubesOnEntireZone = Problem2(lines);
         Console.WriteLine("Day 22 - Problem 1: There are " + cubesOn + " cubes on");
-        Console.WriteLine("Day 22 - Problem 2: There are " + cubesOn + " cubes on");
+        Console.WriteLine("Day 22 - Problem 2: There are " + cubesOnEntireZone + " cubes on");
     }
 
     private static int Problem1(string[] lines)
@@ -33,18 +33,74 @@ public class AdventOfCodeDay22
         return cubesOn.Count;
     }
 
-    private static int Problem2(string[] lines)
+    private static long Problem2(string[] lines)
     {
-        Dictionary<Coordinate, int> cubesOn = new Dictionary<Coordinate, int>();
+        long sum = 0;
+        List<(int onoff, Coordinate low, Coordinate high)> cubesOn = new List<(int, Coordinate, Coordinate)>();
         foreach (string line in lines)
         {
             string[] input = line.Split(' ');
-            Coordinate low = GetLowerRange(input[1]);
-            Coordinate high = GetUpperRange(input[1]);
+            sum = TurnCubesOn(cubesOn, GetLowerRange(input[1]), GetUpperRange(input[1]), input[0].Equals("on") ? 1 : -1, sum);
+        }
+        return sum;
+    }
 
+    private static long GetCubeArea(Coordinate low, Coordinate high)
+    {
+        return ((long)(high.x - low.x + 1) * (long)(high.y - low.y + 1) * (long)(high.z - low.z + 1));
+    }
+
+    public static long TurnCubesOn(List<(int, Coordinate, Coordinate)> cubesOn, Coordinate low, Coordinate high, int onoff, long sum)
+    {
+        List<(int, Coordinate, Coordinate)> intersections = new List<(int, Coordinate, Coordinate)>();
+        foreach ((int onoff, Coordinate low, Coordinate high) cube in cubesOn)
+        {
+            (Coordinate intersectLow, Coordinate intersectHigh) = GetIntersection(cube, low, high);
+            if (IsValidIntersect(intersectLow, intersectHigh))
+            {
+                intersections.Add(((-1 * cube.onoff), intersectLow, intersectHigh));
+                sum = sum + ((-1 * cube.onoff) * GetCubeArea(intersectLow, intersectHigh));
+            }
+        }
+        if (onoff == 1)
+        {
+            cubesOn.Add((onoff, low, high));
+            sum = sum + GetCubeArea(low, high);
 
         }
-        return cubesOn.Count;
+        foreach ((int, Coordinate, Coordinate) cube in intersections)
+        {
+            cubesOn.Add(cube);
+        }
+        return sum;
+    }
+
+    private static (Coordinate, Coordinate) GetIntersection((int onoff, Coordinate low, Coordinate high) cube, Coordinate low, Coordinate high)
+    {
+        int xLow = Math.Max(cube.low.x, low.x);
+        int yLow = Math.Max(cube.low.y, low.y);
+        int zLow = Math.Max(cube.low.z, low.z);
+        int xHigh = Math.Min(cube.high.x, high.x);
+        int yHigh = Math.Min(cube.high.y, high.y);
+        int zHigh = Math.Min(cube.high.z, high.z);
+        return (new Coordinate(xLow, yLow, zLow), new Coordinate(xHigh, yHigh, zHigh));
+    }
+
+    private static bool IsValidIntersect(Coordinate low, Coordinate high)
+    {
+        if (low.x > high.x)
+        {
+            return false;
+        }
+        if (low.y > high.y)
+        {
+            return false;
+        }
+        if (low.z > high.z)
+        {
+            return false;
+        }
+        return true;
     }
 
     private static void TurnCubesOn(Coordinate low, Coordinate high, Dictionary<Coordinate, int> cubesOn)
