@@ -90,12 +90,9 @@ public class AdventOfCodeDay19
     public static Distance ComputeDistance(Beacon beacon1, Beacon beacon2)
     {
         return new Distance(
-            // Math.Abs(Math.Max(beacon1.x, beacon2.x) - Math.Min(beacon1.x, beacon2.x)),
-            // Math.Abs(Math.Max(beacon1.y, beacon2.y) - Math.Min(beacon1.y, beacon2.y)),
-            // Math.Abs(Math.Max(beacon1.z, beacon2.z) - Math.Min(beacon1.z, beacon2.z)));
-            Math.Abs(beacon1.x - beacon2.x),
-            Math.Abs(beacon1.y - beacon2.y),
-            Math.Abs(beacon1.z - beacon2.z));
+            Math.Abs(Math.Max(beacon1.x, beacon2.x) - Math.Min(beacon1.x, beacon2.x)),
+            Math.Abs(Math.Max(beacon1.y, beacon2.y) - Math.Min(beacon1.y, beacon2.y)),
+            Math.Abs(Math.Max(beacon1.z, beacon2.z) - Math.Min(beacon1.z, beacon2.z)));
     }
 
     public static bool CompareTwoScanners(Scanner scanner1, Scanner scanner2, int scannerCount)
@@ -105,7 +102,7 @@ public class AdventOfCodeDay19
             (bool match, List<(Pair, Pair)>? matchingSet) result = CompareScanners(scanner1, scanner2, i);
             if (result.match && result.matchingSet != null)
             {
-                if (NormalizeScanner2(scanner1, scanner2, i, result.matchingSet))
+                if (NormalizeScanner(scanner1, scanner2, i, result.matchingSet))
                 {
                     return true;
                 }
@@ -114,48 +111,7 @@ public class AdventOfCodeDay19
         return false;
     }
 
-    public static void NormalizeScanner(Scanner scanner, int rotate, List<(Pair, Pair)> matchingSet)
-    {
-        Console.WriteLine("Matching pair (A,B) (" + matchingSet[0].Item1.beacon1.x + "," + matchingSet[0].Item1.beacon1.y + "," + matchingSet[0].Item1.beacon1.z + "),(" + matchingSet[0].Item1.beacon2.x + "," + matchingSet[0].Item1.beacon2.y + "," + matchingSet[0].Item1.beacon2.z + ")");
-        Console.WriteLine("With pair (C,D) (" + matchingSet[0].Item2.beacon1.x + "," + matchingSet[0].Item2.beacon1.y + "," + matchingSet[0].Item2.beacon1.z + "),(" + matchingSet[0].Item2.beacon2.x + "," + matchingSet[0].Item2.beacon2.y + "," + matchingSet[0].Item2.beacon2.z + ")");
-
-        scanner.Rotate(rotate);
-
-        if (IsXFlipped(matchingSet))
-        {
-            scanner.FlipX();
-            foreach ((Pair, Pair) set in matchingSet)
-            {
-                set.Item2.FlipX();
-            }
-        }
-        if (IsYFlipped(matchingSet))
-        {
-            scanner.FlipY();
-            foreach ((Pair, Pair) set in matchingSet)
-            {
-                set.Item2.FlipY();
-            }
-        }
-        if (IsZFlipped(matchingSet))
-        {
-            scanner.FlipZ();
-            foreach ((Pair, Pair) set in matchingSet)
-            {
-                set.Item2.FlipZ();
-            }
-        }
-
-        scanner.x = XOffset(matchingSet);
-        scanner.y = YOffset(matchingSet);
-        scanner.z = ZOffset(matchingSet);
-
-        scanner.Translate();
-
-        Console.WriteLine("Resulting pair (C,D) (" + matchingSet[0].Item2.beacon1.x + "," + matchingSet[0].Item2.beacon1.y + "," + matchingSet[0].Item2.beacon1.z + "),(" + matchingSet[0].Item2.beacon2.x + "," + matchingSet[0].Item2.beacon2.y + "," + matchingSet[0].Item2.beacon2.z + ")");
-    }
-
-    public static bool NormalizeScanner2(Scanner scanner1, Scanner scanner2, int rotate, List<(Pair, Pair)> matchingSet)
+    public static bool NormalizeScanner(Scanner scanner1, Scanner scanner2, int rotate, List<(Pair, Pair)> matchingSet)
     {
         scanner2.Rotate(rotate);
         (bool foundMatch, Beacon s1Beacon, Beacon s2Beacon) matchingPair = IdentifyMatchingBeacons(matchingSet);
@@ -195,32 +151,6 @@ public class AdventOfCodeDay19
                 }
             }
         }
-        // for (int i = -1; i < 2; i += 2)
-        // {
-        //     for (int j = -1; j < 2; j += 2)
-        //     {
-        //         for (int k = -1; k < 2; k += 2)
-        //         {
-        //             Scanner testScanner = new Scanner(scanner2);
-        //             if (matchingSet[0].Item1.beacon1.x - matchingSet[0].Item2.beacon1.x == matchingSet[1].Item1.beacon1.x - matchingSet[1].Item2.beacon1.x)
-        //             {
-        //                 if (TranslateAndCompare(scanner1, testScanner, matchingSet[0].Item1.beacon1, matchingSet[0].Item2.beacon1, i, j, k))
-        //                 {
-        //                     UpdateScanner(scanner2, testScanner, i == -1, j == -1, k == -1);
-        //                     return true;
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 if (TranslateAndCompare(scanner1, testScanner, matchingSet[0].Item1.beacon1, matchingSet[0].Item2.beacon2, i, j, k))
-        //                 {
-        //                     UpdateScanner(scanner2, testScanner, i == -1, j == -1, k == -1);
-        //                     return true;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
         Console.WriteLine("Failed out");
         return false;
     }
@@ -275,135 +205,6 @@ public class AdventOfCodeDay19
             }
         }
         return (false, s1Beacon, s2Beacon1);
-    }
-
-    public static void UpdateScanner(Scanner scanner, Scanner testScanner, bool flipX, bool flipY, bool flipZ)
-    {
-        scanner.x = testScanner.x;
-        scanner.y = testScanner.y;
-        scanner.z = testScanner.z;
-        if (flipX)
-        {
-            scanner.FlipX();
-        }
-        if (flipY)
-        {
-            scanner.FlipY();
-        }
-        if (flipZ)
-        {
-            scanner.FlipZ();
-        }
-        scanner.Translate();
-        Console.WriteLine("Test Scanner at " + scanner.x + "," + scanner.y + "," + scanner.z);
-    }
-
-    public static bool TranslateAndCompare(Scanner scanner, Scanner testScanner, Beacon normalizedBeacon, Beacon translatedBeacon, int flipX, int flipY, int flipZ)
-    {
-        testScanner.x = normalizedBeacon.x - (translatedBeacon.x * flipX);
-        testScanner.y = normalizedBeacon.y - (translatedBeacon.y * flipY);
-        testScanner.z = normalizedBeacon.z - (translatedBeacon.z * flipZ);
-        if (flipX == -1)
-        {
-            testScanner.FlipX();
-        }
-        if (flipY == -1)
-        {
-            testScanner.FlipY();
-        }
-        if (flipZ == -1)
-        {
-            testScanner.FlipZ();
-        }
-        testScanner.Translate();
-
-        int matchCount = 0;
-        foreach (Beacon beacon in testScanner.beacons)
-        {
-            if (scanner.beacons.Contains(beacon))
-            {
-                matchCount++;
-            }
-        }
-        return matchCount >= 12;
-    }
-
-    public static int XOffset(List<(Pair pair1, Pair pair2)> matchingSet)
-    {
-        Console.WriteLine("XOFfset calculated using: " + (matchingSet[0].pair1.beacon1.x - matchingSet[0].pair2.beacon1.x) + " and " + (matchingSet[1].pair1.beacon1.x - matchingSet[1].pair2.beacon1.x));
-        Console.WriteLine("Our options at this point are: " + (matchingSet[0].pair1.beacon1.x - matchingSet[0].pair2.beacon1.x) + " or " + (matchingSet[0].pair1.beacon1.x - matchingSet[0].pair2.beacon2.x));
-        if (matchingSet[0].pair1.beacon1.x - matchingSet[0].pair2.beacon1.x == matchingSet[1].pair1.beacon1.x - matchingSet[1].pair2.beacon1.x)
-        {
-            return matchingSet[0].pair1.beacon1.x - matchingSet[0].pair2.beacon1.x;
-        }
-        else
-        {
-            return matchingSet[0].pair1.beacon1.x - matchingSet[0].pair2.beacon2.x;
-        }
-    }
-
-    public static int YOffset(List<(Pair pair1, Pair pair2)> matchingSet)
-    {
-        Console.WriteLine("YOFfset calculated using: " + (matchingSet[0].pair1.beacon1.y - matchingSet[0].pair2.beacon1.y) + " and " + (matchingSet[1].pair1.beacon1.y - matchingSet[1].pair2.beacon1.y));
-        Console.WriteLine("Our options at this point are: " + (matchingSet[0].pair1.beacon1.y - matchingSet[0].pair2.beacon1.y) + " or " + (matchingSet[0].pair1.beacon1.y - matchingSet[0].pair2.beacon2.y));
-        if (matchingSet[0].pair1.beacon1.y - matchingSet[0].pair2.beacon1.y == matchingSet[1].pair1.beacon1.y - matchingSet[1].pair2.beacon1.y)
-        {
-            return matchingSet[0].pair1.beacon1.y - matchingSet[0].pair2.beacon1.y;
-        }
-        else
-        {
-            return matchingSet[0].pair1.beacon1.y - matchingSet[0].pair2.beacon2.y;
-        }
-    }
-
-    public static int ZOffset(List<(Pair pair1, Pair pair2)> matchingSet)
-    {
-        Console.WriteLine("ZOFfset calculated using: " + (matchingSet[0].pair1.beacon1.z - matchingSet[0].pair2.beacon1.z) + " and " + (matchingSet[1].pair1.beacon1.z - matchingSet[1].pair2.beacon1.z));
-        Console.WriteLine("Our options at this point are: " + (matchingSet[0].pair1.beacon1.z - matchingSet[0].pair2.beacon1.z) + " or " + (matchingSet[0].pair1.beacon1.z - matchingSet[0].pair2.beacon2.z));
-        if (matchingSet[0].pair1.beacon1.z - matchingSet[0].pair2.beacon1.z == matchingSet[1].pair1.beacon1.z - matchingSet[1].pair2.beacon1.z)
-        {
-            return matchingSet[0].pair1.beacon1.z - matchingSet[0].pair2.beacon1.z;
-        }
-        else
-        {
-            return matchingSet[0].pair1.beacon1.z - matchingSet[0].pair2.beacon2.z;
-        }
-    }
-
-    public static bool IsXFlipped(List<(Pair pair1, Pair pair2)> matchingSet)
-    {
-        if (matchingSet[0].pair1.beacon1.x - matchingSet[0].pair2.beacon1.x == matchingSet[1].pair1.beacon1.x - matchingSet[1].pair2.beacon1.x)
-        {
-            return matchingSet[0].pair1.beacon1.x - matchingSet[0].pair1.beacon2.x == -1 * (matchingSet[0].pair2.beacon1.x - matchingSet[0].pair2.beacon2.x);
-        }
-        else
-        {
-            return matchingSet[0].pair1.beacon1.x - matchingSet[0].pair1.beacon2.x == -1 * (matchingSet[0].pair2.beacon2.x - matchingSet[0].pair2.beacon1.x);
-        }
-    }
-
-    public static bool IsYFlipped(List<(Pair pair1, Pair pair2)> matchingSet)
-    {
-        if (matchingSet[0].pair1.beacon1.y - matchingSet[0].pair2.beacon1.y == matchingSet[1].pair1.beacon1.y - matchingSet[1].pair2.beacon1.y)
-        {
-            return matchingSet[0].pair1.beacon1.y - matchingSet[0].pair1.beacon2.y == -1 * (matchingSet[0].pair2.beacon1.y - matchingSet[0].pair2.beacon2.y);
-        }
-        else
-        {
-            return matchingSet[0].pair1.beacon1.y - matchingSet[0].pair1.beacon2.y == -1 * (matchingSet[0].pair2.beacon2.y - matchingSet[0].pair2.beacon1.y);
-        }
-    }
-
-    public static bool IsZFlipped(List<(Pair pair1, Pair pair2)> matchingSet)
-    {
-        if (matchingSet[0].pair1.beacon1.z - matchingSet[0].pair2.beacon1.z == matchingSet[1].pair1.beacon1.z - matchingSet[1].pair2.beacon1.z)
-        {
-            return matchingSet[0].pair1.beacon1.z - matchingSet[0].pair1.beacon2.z == -1 * (matchingSet[0].pair2.beacon1.z - matchingSet[0].pair2.beacon2.z);
-        }
-        else
-        {
-            return matchingSet[0].pair1.beacon1.z - matchingSet[0].pair1.beacon2.z == -1 * (matchingSet[0].pair2.beacon2.z - matchingSet[0].pair2.beacon1.z);
-        }
     }
 
     public static (bool, List<(Pair, Pair)>?) CompareScanners(Scanner scanner1, Scanner scanner2, int rotate)
