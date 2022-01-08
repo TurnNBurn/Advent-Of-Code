@@ -115,38 +115,37 @@ public class AdventOfCodeDay19
     {
         scanner2.Rotate(rotate);
         (bool foundMatch, Beacon s1Beacon, Beacon s2Beacon) matchingPair = IdentifyMatchingBeacons(matchingSet);
-        if (!matchingPair.foundMatch)
+        if (matchingPair.foundMatch)
         {
-            return false;
-        }
-        for (int i = 0; i < matchingSet.Count; i++)
-        {
-            if (matchingSet[i].Item1.Contains(matchingPair.s1Beacon) && matchingSet[i].Item2.Contains(matchingPair.s2Beacon))
+            for (int i = 0; i < matchingSet.Count; i++)
             {
-                if (matchingSet[i].Item1.beacon1.Equals(matchingPair.s1Beacon))
+                if (matchingSet[i].Item1.Contains(matchingPair.s1Beacon) && matchingSet[i].Item2.Contains(matchingPair.s2Beacon))
                 {
-                    if (matchingSet[i].Item2.beacon1.Equals(matchingPair.s2Beacon))
+                    if (matchingSet[i].Item1.beacon1.Equals(matchingPair.s1Beacon))
                     {
-                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon1, matchingSet[i].Item1.beacon2, matchingSet[i].Item2.beacon1, matchingSet[i].Item2.beacon2);
-                        return true;
+                        if (matchingSet[i].Item2.beacon1.Equals(matchingPair.s2Beacon))
+                        {
+                            FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon1, matchingSet[i].Item1.beacon2, matchingSet[i].Item2.beacon1, matchingSet[i].Item2.beacon2);
+                            return true;
+                        }
+                        else
+                        {
+                            FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon1, matchingSet[i].Item1.beacon2, matchingSet[i].Item2.beacon2, matchingSet[i].Item2.beacon1);
+                            return true;
+                        }
                     }
                     else
                     {
-                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon1, matchingSet[i].Item1.beacon2, matchingSet[i].Item2.beacon2, matchingSet[i].Item2.beacon1);
-                        return true;
-                    }
-                }
-                else
-                {
-                    if (matchingSet[i].Item2.beacon1.Equals(matchingPair.s2Beacon))
-                    {
-                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon2, matchingSet[i].Item1.beacon1, matchingSet[i].Item2.beacon1, matchingSet[i].Item2.beacon2);
-                        return true;
-                    }
-                    else
-                    {
-                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon2, matchingSet[i].Item1.beacon1, matchingSet[i].Item2.beacon2, matchingSet[i].Item2.beacon1);
-                        return true;
+                        if (matchingSet[i].Item2.beacon1.Equals(matchingPair.s2Beacon))
+                        {
+                            FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon2, matchingSet[i].Item1.beacon1, matchingSet[i].Item2.beacon1, matchingSet[i].Item2.beacon2);
+                            return true;
+                        }
+                        else
+                        {
+                            FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon2, matchingSet[i].Item1.beacon1, matchingSet[i].Item2.beacon2, matchingSet[i].Item2.beacon1);
+                            return true;
+                        }
                     }
                 }
             }
@@ -179,11 +178,19 @@ public class AdventOfCodeDay19
         scanner.Translate();
     }
 
+    //This function searches for an instance within matchingSet where there exist two entries such that
+    //there is a beacon s1Beacon which exists in Item1 of both entries, and there is a beacon s2Beacon which
+    //exists in Item2 of both entries.
+    //If two such entries exist, then we assume s1Beacon represents the same beacon as s2Beacon, and we return a Tuple indicating "true" that 
+    //we found such beacons, as well as the beacons themselves
+    //Not the most elegant structure but here we are.
     public static (bool, Beacon, Beacon) IdentifyMatchingBeacons(List<(Pair, Pair)> matchingSet)
     {
         Beacon s1Beacon = matchingSet[0].Item1.beacon1;
         Beacon s2Beacon1 = matchingSet[0].Item2.beacon1;
         Beacon s2Beacon2 = matchingSet[0].Item2.beacon2;
+        //It's possible that the first entry in matchingSet contains beacons that we don't see again in later entries.
+        //So we potentially need to compare every entry with every other entry (though we will likely find a matching entry sooner and short circuit)
         for (int j = 0; j < matchingSet.Count; j++)
         {
             s1Beacon = matchingSet[j].Item1.beacon1;
@@ -398,24 +405,6 @@ public class Pair
         distance = dist;
     }
 
-    public void FlipX()
-    {
-        beacon1.FlipX();
-        beacon2.FlipX();
-    }
-
-    public void FlipY()
-    {
-        beacon1.FlipY();
-        beacon2.FlipY();
-    }
-
-    public void FlipZ()
-    {
-        beacon1.FlipZ();
-        beacon2.FlipZ();
-    }
-
     public bool Contains(Beacon beacon)
     {
         if (beacon1.Equals(beacon))
@@ -444,16 +433,6 @@ public class Scanner
         x = 0;
         y = 0;
         z = 0;
-    }
-
-    public Scanner(Scanner scanner)
-    {
-        beacons = new List<Beacon>();
-        pairs = new List<Pair>();
-        foreach (Beacon beacon in scanner.beacons)
-        {
-            beacons.Add(new Beacon(beacon.x, beacon.y, beacon.z));
-        }
     }
 
     public void Rotate(int rotate)
