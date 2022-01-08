@@ -25,7 +25,7 @@ public class AdventOfCodeDay19
             {
                 for (int j = 0; j < scanners.Count; j++)
                 {
-                    if (CompareTwoScanners(normalizedScanners[i], scanners[j]))
+                    if (CompareTwoScanners(normalizedScanners[i], scanners[j], scanners.Count))
                     {
                         normalizedScanners.Add(scanners[j]);
                         scanners.Remove(scanners[j]);
@@ -98,7 +98,7 @@ public class AdventOfCodeDay19
             Math.Abs(beacon1.z - beacon2.z));
     }
 
-    public static bool CompareTwoScanners(Scanner scanner1, Scanner scanner2)
+    public static bool CompareTwoScanners(Scanner scanner1, Scanner scanner2, int scannerCount)
     {
         for (int i = 0; i < 6; i++)
         {
@@ -158,33 +158,123 @@ public class AdventOfCodeDay19
     public static bool NormalizeScanner2(Scanner scanner1, Scanner scanner2, int rotate, List<(Pair, Pair)> matchingSet)
     {
         scanner2.Rotate(rotate);
-        for (int i = -1; i < 2; i += 2)
+        (bool foundMatch, Beacon s1Beacon, Beacon s2Beacon) matchingPair = IdentifyMatchingBeacons(matchingSet);
+        if (!matchingPair.foundMatch)
         {
-            for (int j = -1; j < 2; j += 2)
+            return false;
+        }
+        for (int i = 0; i < matchingSet.Count; i++)
+        {
+            if (matchingSet[i].Item1.Contains(matchingPair.s1Beacon) && matchingSet[i].Item2.Contains(matchingPair.s2Beacon))
             {
-                for (int k = -1; k < 2; k += 2)
+                if (matchingSet[i].Item1.beacon1.Equals(matchingPair.s1Beacon))
                 {
-                    Scanner testScanner = new Scanner(scanner2);
-                    if (matchingSet[0].Item1.beacon1.x - matchingSet[0].Item2.beacon1.x == matchingSet[1].Item1.beacon1.x - matchingSet[1].Item2.beacon1.x)
+                    if (matchingSet[i].Item2.beacon1.Equals(matchingPair.s2Beacon))
                     {
-                        if (TranslateAndCompare(scanner1, testScanner, matchingSet[0].Item1.beacon1, matchingSet[0].Item2.beacon1, i, j, k))
-                        {
-                            UpdateScanner(scanner2, testScanner, i == -1, j == -1, k == -1);
-                            return true;
-                        }
+                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon1, matchingSet[i].Item1.beacon2, matchingSet[i].Item2.beacon1, matchingSet[i].Item2.beacon2);
+                        return true;
                     }
                     else
                     {
-                        if (TranslateAndCompare(scanner1, testScanner, matchingSet[0].Item1.beacon1, matchingSet[0].Item2.beacon2, i, j, k))
-                        {
-                            UpdateScanner(scanner2, testScanner, i == -1, j == -1, k == -1);
-                            return true;
-                        }
+                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon1, matchingSet[i].Item1.beacon2, matchingSet[i].Item2.beacon2, matchingSet[i].Item2.beacon1);
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (matchingSet[i].Item2.beacon1.Equals(matchingPair.s2Beacon))
+                    {
+                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon2, matchingSet[i].Item1.beacon1, matchingSet[i].Item2.beacon1, matchingSet[i].Item2.beacon2);
+                        return true;
+                    }
+                    else
+                    {
+                        FlipAndTranslate(scanner2, matchingSet[i].Item1.beacon2, matchingSet[i].Item1.beacon1, matchingSet[i].Item2.beacon2, matchingSet[i].Item2.beacon1);
+                        return true;
                     }
                 }
             }
         }
+        // for (int i = -1; i < 2; i += 2)
+        // {
+        //     for (int j = -1; j < 2; j += 2)
+        //     {
+        //         for (int k = -1; k < 2; k += 2)
+        //         {
+        //             Scanner testScanner = new Scanner(scanner2);
+        //             if (matchingSet[0].Item1.beacon1.x - matchingSet[0].Item2.beacon1.x == matchingSet[1].Item1.beacon1.x - matchingSet[1].Item2.beacon1.x)
+        //             {
+        //                 if (TranslateAndCompare(scanner1, testScanner, matchingSet[0].Item1.beacon1, matchingSet[0].Item2.beacon1, i, j, k))
+        //                 {
+        //                     UpdateScanner(scanner2, testScanner, i == -1, j == -1, k == -1);
+        //                     return true;
+        //                 }
+        //             }
+        //             else
+        //             {
+        //                 if (TranslateAndCompare(scanner1, testScanner, matchingSet[0].Item1.beacon1, matchingSet[0].Item2.beacon2, i, j, k))
+        //                 {
+        //                     UpdateScanner(scanner2, testScanner, i == -1, j == -1, k == -1);
+        //                     return true;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        Console.WriteLine("Failed out");
         return false;
+    }
+
+    public static void FlipAndTranslate(Scanner scanner, Beacon s1Beacon1, Beacon s1Beacon2, Beacon s2Beacon1, Beacon s2Beacon2)
+    {
+        if (s1Beacon1.x - s1Beacon2.x != s2Beacon1.x - s2Beacon2.x)
+        {
+            s2Beacon1.x = s2Beacon1.x * -1;
+            scanner.FlipX();
+        }
+        if (s1Beacon1.y - s1Beacon2.y != s2Beacon1.y - s2Beacon2.y)
+        {
+            s2Beacon1.y = s2Beacon1.y * -1;
+            scanner.FlipY();
+        }
+        if (s1Beacon1.z - s1Beacon2.z != s2Beacon1.z - s2Beacon2.z)
+        {
+            s2Beacon1.z = s2Beacon1.z * -1;
+            scanner.FlipZ();
+        }
+
+        scanner.x = s1Beacon1.x - s2Beacon1.x;
+        scanner.y = s1Beacon1.y - s2Beacon1.y;
+        scanner.z = s1Beacon1.z - s2Beacon1.z;
+        scanner.Translate();
+    }
+
+    public static (bool, Beacon, Beacon) IdentifyMatchingBeacons(List<(Pair, Pair)> matchingSet)
+    {
+        Beacon s1Beacon = matchingSet[0].Item1.beacon1;
+        Beacon s2Beacon1 = matchingSet[0].Item2.beacon1;
+        Beacon s2Beacon2 = matchingSet[0].Item2.beacon2;
+        for (int j = 0; j < matchingSet.Count; j++)
+        {
+            s1Beacon = matchingSet[j].Item1.beacon1;
+            s2Beacon1 = matchingSet[j].Item2.beacon1;
+            s2Beacon2 = matchingSet[j].Item2.beacon2;
+            for (int i = 1; i < matchingSet.Count; i++)
+            {
+                if (matchingSet[i].Item1.Contains(s1Beacon))
+                {
+                    if (matchingSet[i].Item2.Contains(s2Beacon1))
+                    {
+                        return (true, s1Beacon, s2Beacon1);
+                    }
+                    if (matchingSet[i].Item2.Contains(s2Beacon2))
+                    {
+                        return (true, s1Beacon, s2Beacon2);
+                    }
+                }
+            }
+        }
+        return (false, s1Beacon, s2Beacon1);
     }
 
     public static void UpdateScanner(Scanner scanner, Scanner testScanner, bool flipX, bool flipY, bool flipZ)
@@ -523,6 +613,19 @@ public class Pair
     {
         beacon1.FlipZ();
         beacon2.FlipZ();
+    }
+
+    public bool Contains(Beacon beacon)
+    {
+        if (beacon1.Equals(beacon))
+        {
+            return true;
+        }
+        if (beacon2.Equals(beacon))
+        {
+            return true;
+        }
+        return false;
     }
 }
 
