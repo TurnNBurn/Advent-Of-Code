@@ -1,4 +1,4 @@
-class AdventOfCode
+class AdventOfCode2021
 {
 
     static void Main()
