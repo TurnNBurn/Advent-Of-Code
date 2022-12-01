@@ -5,7 +5,7 @@ public class AdventOfCodeDay5
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 5/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 5/Problem1Input.txt");
         int coordsWithMoreThanOneHit = Problem1(lines);
         int coordsIncludingDiagonal = Problem2(lines);
         Console.WriteLine("Day 5 - Problem 1: There are " + coordsWithMoreThanOneHit + " coordinates hit by more than one line.");

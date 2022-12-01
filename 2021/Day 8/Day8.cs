@@ -6,7 +6,7 @@ public class AdventOfCodeDay8
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 8/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 8/Problem1Input.txt");
         int numUniqueDigits = Problem1(lines);
         int totalSum = Problem2(lines);
         Console.WriteLine("Day 8 - Problem 1: 1, 4, 7, and 8 appear " + numUniqueDigits + " times.");

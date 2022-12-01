@@ -8,7 +8,7 @@ public class AdventOfCodeDay18
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 18/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 18/Problem1Input.txt");
         int magnitude = Problem1(lines);
         int largestSum = Problem2(lines);
         Console.WriteLine("Day 18 - Problem 1: The magnitude of the final sum is " + magnitude);

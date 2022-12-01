@@ -5,7 +5,7 @@ public class AdventOfCodeDay1
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 1/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 1/Problem1Input.txt");
         int numIncreases = Problem1(lines);
         int numThreeMeasureIncreases = Problem2(lines);
 

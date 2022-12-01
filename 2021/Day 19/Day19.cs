@@ -7,7 +7,7 @@ public class AdventOfCodeDay19
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 19/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 19/Problem1Input.txt");
         int beacons = Problem1(lines);
         Console.WriteLine("Day 19 - Problem 1: There are " + beacons + " beacons");
     }

@@ -6,7 +6,7 @@ public class AdventOfCodeDay16
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 16/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 16/Problem1Input.txt");
         int versionSum = Problem1(lines);
         long packetExpression = Problem2(lines);
         Console.WriteLine("Day 16 - Problem 1: The sum of all the packet versions is " + versionSum);

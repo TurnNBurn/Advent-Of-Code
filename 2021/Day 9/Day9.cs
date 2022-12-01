@@ -5,7 +5,7 @@ public class AdventOfCodeDay9
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 9/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 9/Problem1Input.txt");
         int sumOfLowSpots = Problem1(lines);
         int areaOfLargestBasins = Problem2(lines);
         Console.WriteLine("Day 9 - Problem 1: The sum of the low spots is " + sumOfLowSpots);

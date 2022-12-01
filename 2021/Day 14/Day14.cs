@@ -6,7 +6,7 @@ public class AdventOfCodeDay14
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 14/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 14/Problem1Input.txt");
         long tenInsertions = Problem1(lines);
         long fortyInsertions = Problem2(lines);
         Console.WriteLine("Day 14 - Problem 1: The most common element minus the least common element after 10 insertions is " + tenInsertions);

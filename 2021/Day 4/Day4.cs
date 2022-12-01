@@ -5,7 +5,7 @@ public class AdventOfCodeDay4
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 4/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 4/Problem1Input.txt");
         int bingoScore = Problem1(lines);
         int losingBingoScore = Problem2(lines);
 

@@ -5,7 +5,7 @@ public class AdventOfCodeDay17
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 17/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 17/Problem1Input.txt");
         int maxY = Problem1(lines);
         int numVelocities = Problem2(lines);
         Console.WriteLine("Day 17 - Problem 1: The highest y point acheived is " + maxY);

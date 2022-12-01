@@ -5,7 +5,7 @@ public class AdventOfCodeDay12
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 12/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 12/Problem1Input.txt");
         int totalPaths = Problem1(lines);
         int totalPathsWithRevisiting = Problem2(lines);
         Console.WriteLine("Day 12 - Problem 1: There are " + totalPaths + " distinct paths to the exit.");

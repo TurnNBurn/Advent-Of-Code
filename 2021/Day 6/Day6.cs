@@ -5,7 +5,7 @@ public class AdventOfCodeDay6
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 6/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 6/Problem1Input.txt");
         int numberOfFish = Problem1(lines);
         long numberOfFish2 = Problem2(lines);
         Console.WriteLine("Day 6 - Problem 1: After 80 days there are " + numberOfFish + " fish.");

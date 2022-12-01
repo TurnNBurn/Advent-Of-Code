@@ -5,7 +5,7 @@ public class AdventOfCodeDay15
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 15/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 15/Problem1Input.txt");
         int totalRisk = Problem1(lines);
         int riskOfFullCave = Problem2(lines);
         Console.WriteLine("Day 15 - Problem 1: The lowest total risk out of the cave is " + totalRisk);

@@ -5,7 +5,7 @@ public class AdventOfCodeDay2
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 2/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 2/Problem1Input.txt");
         int depthTimesHoriz = Problem1(lines);
         int depthTimesHorizCorrected = Problem2(lines);
 

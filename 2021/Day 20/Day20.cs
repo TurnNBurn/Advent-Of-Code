@@ -6,7 +6,7 @@ public class AdventOfCodeDay20
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 20/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 20/Problem1Input.txt");
         int numBrightPixels = Problem1(lines);
         int after50Enhances = Problem2(lines);
         Console.WriteLine("Day 20 - Problem 1: After 2 enhances, there are " + numBrightPixels + " bright pixels");

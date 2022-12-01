@@ -5,7 +5,7 @@ public class AdventOfCodeDay21
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 21/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 21/Problem1Input.txt");
         int product = Problem1(lines);
         long mostWins = Problem2(lines);
         Console.WriteLine("Day 21 - Problem 1: The product of the losers score and number of dice rolls is " + product);

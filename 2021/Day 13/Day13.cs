@@ -6,7 +6,7 @@ public class AdventOfCodeDay13
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 13/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 13/Problem1Input.txt");
         int totalDots = Problem1(lines);
         Problem2(lines);
         Console.WriteLine("Day 13 - Problem 1: There are " + totalDots + " after folding the paper once.");
@@ -66,7 +66,7 @@ public class AdventOfCodeDay13
             }
             graphicMap[i] = mapLine.ToString();
         }
-        File.WriteAllLinesAsync("./Day 13/Problem2Output.txt", graphicMap);
+        File.WriteAllLinesAsync("./2021/Day 13/Problem2Output.txt", graphicMap);
     }
 
     private static void Problem2(string[] lines)

@@ -5,7 +5,7 @@ public class AdventOfCodeDay7
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 7/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 7/Problem1Input.txt");
         int lowestGasCost = Problem1(lines);
         //int lowestGasCostCorrected = Problem2(lines);
         Console.WriteLine("Day 7 - Problem 1: The lowest gas cost is " + lowestGasCost);

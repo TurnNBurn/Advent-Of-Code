@@ -5,7 +5,7 @@ public class AdventOfCodeDay22
 
     public static void run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./Day 22/Problem1Input.txt");
+        string[] lines = System.IO.File.ReadAllLines("./2021/Day 22/Problem1Input.txt");
         int cubesOn = Problem1(lines);
         long cubesOnEntireZone = Problem2(lines);
         Console.WriteLine("Day 22 - Problem 1: There are " + cubesOn + " cubes on");

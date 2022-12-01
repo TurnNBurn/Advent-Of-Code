@@ -1,7 +1,7 @@
-class AdventOfCode2021
+public class AdventOfCode2021
 {
 
-    static void Main()
+    public static void run()
     {
         AdventOfCodeDay1.run();
         AdventOfCodeDay2.run();
