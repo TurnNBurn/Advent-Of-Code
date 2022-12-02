@@ -40,14 +40,20 @@ public class AdventOfCode2022Day1
     private static int Problem2(string[] lines)
     {
         int calories = 0;
+        int heapLowest = 0;
         PriorityQueue<int, int> heap = new PriorityQueue<int, int>();
         for (int i = 0; i < lines.Length; i++)
         {
             if (lines[i].Equals(String.Empty))
             {
-                if (heap.Count < 3 || calories > heap.Peek())
+                if (heap.Count < 3 || calories > heapLowest)
                 {
                     heap.Enqueue(calories, calories);
+                    if (heap.Count > 3)
+                    {
+                        heap.Dequeue();
+                    }
+                    heapLowest = heap.Peek();
                 }
                 calories = 0;
             }
@@ -56,13 +62,13 @@ public class AdventOfCode2022Day1
                 calories += Convert.ToInt32(lines[i]);
             }
         }
-        if (calories != 0 && calories > heap.Peek())
+        if (calories != 0 && calories > heapLowest)
         {
             heap.Enqueue(calories, calories);
-        }
-        while (heap.Count > 3)
-        {
-            heap.Dequeue();
+            if (heap.Count > 3)
+            {
+                heap.Dequeue();
+            }
         }
         int totalCalories = 0;
         while (heap.Count > 0)
