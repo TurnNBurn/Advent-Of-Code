@@ -79,19 +79,21 @@ public class AdventOfCode2022Day8
     private static int Problem2(string[] lines)
     {
         int[][] grid = ParseGrid(lines);
-        int[][] scenicGrid = new int[grid.Length][];
-        int[][] upHeight = new int[grid.Length][];
-        int[][] downHeight = new int[grid.Length][];
+        int height = grid.Length;
+        int width = grid[0].Length;
+        int[][] scenicGrid = new int[height][];
+        int[][] upHeight = new int[height][];
+        int[][] downHeight = new int[height][];
         for (int i = 0; i < scenicGrid.Length; i++)
         {
-            scenicGrid[i] = new int[grid[0].Length];
-            upHeight[i] = new int[grid[0].Length];
-            downHeight[i] = new int[grid[0].Length];
+            scenicGrid[i] = new int[width];
+            upHeight[i] = new int[width];
+            downHeight[i] = new int[width];
         }
-        for (int i = 1; i < grid.Length - 1; i++)
+        for (int i = 1; i < height - 1; i++)
         {
-            int[] leftHeight = new int[grid[0].Length];
-            for (int j = 1; j < grid[0].Length - 1; j++)
+            int[] leftHeight = new int[width];
+            for (int j = 1; j < width - 1; j++)
             {
                 if (grid[i][j] > grid[i][j - 1] && j > 1)
                 {
@@ -125,29 +127,29 @@ public class AdventOfCode2022Day8
             }
         }
         int maxScenic = 0;
-        for (int i = grid.Length - 2; i > 0; i--)
+        for (int i = height - 2; i > 0; i--)
         {
-            int[] rightScenic = new int[grid[0].Length];
+            int[] rightScenic = new int[width];
             for (int j = grid.Length - 2; j > 0; j--)
             {
-                if (grid[i][j] > grid[i][j + 1] && j < grid.Length - 2)
+                if (grid[i][j] > grid[i][j + 1] && j < width - 2)
                 {
                     int rightIndex = rightScenic[j + 1];
-                    while (grid[i][j] > grid[i][rightIndex] && rightIndex < grid[0].Length - 1)
+                    while (grid[i][j] > grid[i][rightIndex] && rightIndex < (width - 1))
                     {
                         rightIndex = rightScenic[rightIndex];
                     }
-                    rightScenic[j] = rightScenic[j + 1] + 1;
+                    rightScenic[j] = rightIndex;
                     scenicGrid[i][j] *= rightIndex - j;
                 }
                 else
                 {
                     rightScenic[j] = j + 1;
                 }
-                if (grid[i][j] > grid[i + 1][j] && i < grid.Length - 2)
+                if (grid[i][j] > grid[i + 1][j] && i < height - 2)
                 {
                     int downIndex = downHeight[i + 1][j];
-                    while (grid[i][j] > grid[downIndex][j] && downIndex < grid.Length - 1)
+                    while (grid[i][j] > grid[downIndex][j] && downIndex < height - 1)
                     {
                         downIndex = downHeight[downIndex][j];
                     }
