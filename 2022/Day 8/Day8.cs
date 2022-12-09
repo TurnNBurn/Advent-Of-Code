@@ -72,7 +72,6 @@ public class AdventOfCode2022Day8
                 }
             }
         }
-        Console.WriteLine(grid.Length + " visible trees in the middle");
         return visibleCount + (4 * (grid.Length - 1));
     }
 
