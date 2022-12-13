@@ -12,7 +12,7 @@ public class AdventOfCode2022Day13
         int decoder = Problem2(lines);
 
         Console.WriteLine("Day 13 - Problem 1: The sum of packets in order is " + inOrderSum + ".");
-        Console.WriteLine("Day 12 - Problem 2: The decoder key is " + decoder + ".");
+        Console.WriteLine("Day 13 - Problem 2: The decoder key is " + decoder + ".");
     }
 
     private static int Problem1(string[] lines)
