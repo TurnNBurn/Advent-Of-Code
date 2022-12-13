@@ -14,5 +14,6 @@ public class AdventOfCode2022
         AdventOfCode2022Day9.run();
         AdventOfCode2022Day10.run();
         AdventOfCode2022Day11.run();
+        AdventOfCode2022Day12.run();
     }
 }
