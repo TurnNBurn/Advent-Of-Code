@@ -33,7 +33,7 @@ public class AdventOfCode2022Day16
                 if (!valvesWithFlow[i].distanceToFlow.ContainsKey(valvesWithFlow[j]))
                 {
                     int distance = BuildDistanceMap(valvesWithFlow[i], valvesWithFlow[j], null);
-                    Console.WriteLine("The distance from " + valvesWithFlow[i].ID + " to " + valvesWithFlow[j].ID + " is " + distance);
+                    //Console.WriteLine("The distance from " + valvesWithFlow[i].ID + " to " + valvesWithFlow[j].ID + " is " + distance);
                     valvesWithFlow[i].distanceToFlow.Add(valvesWithFlow[j], distance);
                     valvesWithFlow[j].distanceToFlow.Add(valvesWithFlow[i], distance);
                 }

@@ -16,10 +16,66 @@ public class AdventOfCode2022Day17
 
     private static int Problem1(string[] lines)
     {
+        int[] floor = { 0, 0, 0, 0, 0, 0, 0 };
+        for (int i = 0; i < 2022; i++)
+        {
+            switch ((i + 1) % 5)
+            {
+                case 1:
+
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+
+                    break;
+                default:
+
+                    break;
+            }
+        }
         return -1;
     }
 
-    private static int Problem2(string[] lines){
+    private static int Problem2(string[] lines)
+    {
         return -1;
+    }
+
+    public class Tetris
+    {
+        int left;
+        int right;
+        int bottom;
+
+        public Tetris(int Left, int Right, int Bottom)
+        {
+            this.left = Left;
+            this.right = Right;
+            this.bottom = Bottom;
+        }
+
+        public bool IsResting()
+        {
+            return false;
+        }
+
+        public void MoveLeft()
+        {
+
+        }
+
+        public void MoveRight()
+        {
+
+        }
+        public void MoveDown()
+        {
+
+        }
     }
 }
