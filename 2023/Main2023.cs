@@ -6,5 +6,6 @@ public class AdventOfCode2023
         AdventOfCode2023Day1.run();
         AdventOfCode2023Day2.run();
         AdventOfCode2023Day3.run();
+        AdventOfCode2023Day4.run();
     }
 }
