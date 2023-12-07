@@ -19,7 +19,7 @@ public class AdventOfCode2023Day1
             // Read the content of the text file
             string[] content = File.ReadAllLines(filePath);
             long points = Problem1(content);
-            Console.WriteLine("Day 4 - Problem 1: the sum of the card points is " + points);
+            Console.WriteLine("Day 4 - Problem 1: the lowest seed location is " + points);
             //int totalCards = Problem2(content);
             //Console.WriteLine("Day 2 - The total number of cards is " + totalCards);
         }
@@ -32,7 +32,7 @@ public class AdventOfCode2023Day1
     private static long Problem1(string[] lines)
     {
         long minLocation = 0;
-        long[] seeds = lines[0].Split(':')[1].Split(" ").Select(seed => Convert.ToInt64(seed)).ToArray();
+        long[] seeds = lines[0].Split(':')[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(seed => Convert.ToInt64(seed)).ToArray();
         List<Range> knownRanges = new List<Range> { new Range(0, long.MaxValue, 0) };
 
         foreach (string line in lines)
@@ -58,16 +58,22 @@ public class AdventOfCode2023Day1
 
     private static long ConvertSeed(long seed, List<Range> knownRanges)
     {
+        foreach (Range range in knownRanges)
+        {
+            if (range.Low <= seed && range.High >= seed)
+            {
+                return seed + range.offset;
+            }
+        }
         return 0;
     }
 
     private static List<Range> InsertRange(List<Range> knownRanges, Range newRange, long transform)
     {
         List<Range> newRanges = new List<Range>();
-        bool newRangeAdded = false;
         foreach (Range range in knownRanges)
         {
-            if (range.High < newRange.Low)
+            if (range.High + range.offset < newRange.Low)
             {
                 newRanges.Add(range);
                 continue;
@@ -75,27 +81,25 @@ public class AdventOfCode2023Day1
 
             if (range.Low + range.offset > newRange.High)
             {
-                if (!newRangeAdded)
-                {
-                    newRanges.Add(newRange);
-                    newRangeAdded = true;
-                }
                 newRanges.Add(range);
                 continue;
             }
 
-            if (range.Low < newRange.Low)
+            if (range.Low + range.offset < newRange.Low)
             {
-                newRanges.Add(new Range(range.Low, newRange.Low - 1, range.offset));
+                newRanges.Add(new Range(range.Low, newRange.Low - range.offset - 1, range.offset));
             }
 
-            if (!newRangeAdded)
+            if (range.High + range.offset > newRange.High)
             {
-                newRanges.Add(new Range(newRange.Low, Math.Min));
-                newRangeAdded = true;
+                newRanges.Add(new Range(range.High + range.offset - newRange.High, range.High, range.offset));
             }
+
+            if (range.Low + range.offset > newRange.Low && range.High + range.offset < newRange.High)
+                continue;
 
         }
+        newRanges.Add(new Range(newRange.Low, newRange.High, newRange.offset));
         return newRanges;
     }
 
