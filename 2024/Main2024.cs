@@ -5,5 +5,6 @@ public class AdventOfCode2024
     {
         AdventOfCode2024Day1.Run();
         AdventOfCode2024Day2.Run();
+        AdventOfCode2024Day3.Run();
     }
 }
