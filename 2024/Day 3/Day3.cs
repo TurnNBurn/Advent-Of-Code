@@ -8,8 +8,8 @@ public class AdventOfCode2024Day3
         string[] lines = System.IO.File.ReadAllLines("./2024/Day 3/Problem1Input.txt");
         int sum = Problem1(lines);
         Console.WriteLine("Day 3 - The sum of the multiplication is: " + sum);
-        int similarityScore = Problem2(lines);
-        Console.WriteLine("Day 3 - Problem 2: there are " + similarityScore + " safe reports with the dampener");
+        int enabledSum = Problem2(lines);
+        Console.WriteLine("Day 3 - The sum of the enabled mutliplication is " + enabledSum);
     }
 
     private static int Problem1(string[] lines)
@@ -49,6 +49,38 @@ public class AdventOfCode2024Day3
 
     private static int Problem2(string[] lines)
     {
-        return 0;
+        int sum = 0;
+        foreach (string line in lines)
+        {
+            sum += ProcessLineForDos(line);
+        }
+        return sum;
+    }
+
+    private static int ProcessLineForDos(string line)
+    {
+        int sum = 0;
+        string doPattern = @"(?<!don')\bdo\b";
+        string dontPattern = @"\bdon't\b";
+
+        MatchCollection doMatches = Regex.Matches(line, doPattern);
+        MatchCollection dontMatches = Regex.Matches(line, dontPattern);
+
+        int dontIndex = 0;
+        if (dontMatches[0].Index < doMatches[0].Index)
+        {
+            dontIndex = 1;
+            sum += ProcessOneLine(line.Substring(0, dontMatches[0].Index));
+        }
+
+        for (int i = 0; i < doMatches.Count; i++)
+        {
+            if (i >= dontMatches.Count)
+                return sum + ProcessOneLine(line.Substring(doMatches[i].Index));
+            int length = dontMatches[i + dontIndex].Index - doMatches[i].Index;
+            sum += ProcessOneLine(line.Substring(doMatches[i].Index, length));
+        }
+
+        return sum;
     }
 }
