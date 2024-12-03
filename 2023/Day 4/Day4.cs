@@ -6,7 +6,7 @@ public class AdventOfCode2023Day4
         string[] lines = System.IO.File.ReadAllLines("./2023/Day 4/Problem1Input.txt");
         int points = Problem1(lines);
         Console.WriteLine("Day 4 - Problem 1: the sum of the card points is " + points);
-        int totalCards = Problem2(content);
+        int totalCards = Problem2(lines);
         Console.WriteLine("Day 2 - The total number of cards is " + totalCards);
     }
 

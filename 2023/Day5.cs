@@ -1,32 +1,15 @@
 using System.Text.RegularExpressions;
 
-public class AdventOfCode2023Day1
+public class AdventOfCode2023Day5
 {
 
-    public static void Main()
+    public static void run()
     {
-        string directory = @"C:\Users\1610103\source\repos\Playground\AdventOfCode\AdventOfCode\";
-
-        // Specify the filename
-        string filename = "Problem1Input.txt";
-
-        // Construct the full path to the text file
-        string filePath = Path.Combine(directory, filename);
-
-        // Check if the file exists before attempting to read
-        if (File.Exists(filePath))
-        {
-            // Read the content of the text file
-            string[] content = File.ReadAllLines(filePath);
-            long points = Problem1(content);
-            Console.WriteLine("Day 4 - Problem 1: the lowest seed location is " + points);
-            //int totalCards = Problem2(content);
-            //Console.WriteLine("Day 2 - The total number of cards is " + totalCards);
-        }
-        else
-        {
-            Console.WriteLine("Error - file not found");
-        }
+        string[] lines = System.IO.File.ReadAllLines("./2023/Day 5/Problem1Input.txt");
+        long points = Problem1(lines);
+        Console.WriteLine("Day 4 - Problem 1: the lowest seed location is " + +points);
+        //long totalCards = Problem2(lines);
+        //Console.WriteLine("Day 2 - The total number of cards is " + totalCards);
     }
 
     private static long Problem1(string[] lines)
@@ -39,7 +22,7 @@ public class AdventOfCode2023Day1
         {
             if (line.Contains(':'))
                 continue;
-            if(string.IsNullOrEmpty(line)) 
+            if (string.IsNullOrEmpty(line))
                 continue;
             string[] pieces = line.Split(" ");
             long min = Convert.ToInt64(pieces[0]);
