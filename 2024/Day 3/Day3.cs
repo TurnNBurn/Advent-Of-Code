@@ -22,7 +22,7 @@ public class AdventOfCode2024Day3
 
     private static int ProcessOneLine(string line)
     {
-        string pattern = @"mul\((.{1,7})\)";
+        string pattern = @"mul\(([0-9,]{1,7})\)";
         MatchCollection matches = Regex.Matches(line, pattern);
 
         int sum = 0;
@@ -50,37 +50,45 @@ public class AdventOfCode2024Day3
     private static int Problem2(string[] lines)
     {
         int sum = 0;
+        string doPattern = @"do\(\)";
+        string dontPattern = @"don't\(\)";
+        bool isEnabled = true;
         foreach (string line in lines)
         {
-            sum += ProcessLineForDos(line);
+            MatchCollection doMatches = Regex.Matches(line, doPattern);
+            MatchCollection dontMatches = Regex.Matches(line, dontPattern);
+
+            Console.WriteLine($"There are {dontMatches.Count} dont's and {doMatches.Count} do's");
+
+            int startIndex = isEnabled ? 0 : doMatches[0].Index;
+            int dontIndex = 0;
+            while (dontMatches[dontIndex].Index < startIndex)
+                dontIndex++;
+            int doIndex = 0;
+
+            while (dontIndex < dontMatches.Count && doIndex < doMatches.Count)
+            {
+                Console.WriteLine($"{startIndex} : {dontMatches[dontIndex].Index}");
+                sum += ProcessOneLine(line[startIndex..dontMatches[dontIndex].Index]);
+                while (doIndex < doMatches.Count && doMatches[doIndex].Index < dontMatches[dontIndex].Index)
+                    doIndex++;
+                if (doIndex >= doMatches.Count)
+                {
+                    isEnabled = false;
+                    continue;
+                }
+                while (dontIndex < dontMatches.Count && doMatches[doIndex].Index > dontMatches[dontIndex].Index)
+                    dontIndex++;
+                startIndex = doMatches[doIndex].Index;
+            }
+
+            if (doIndex < doMatches.Count)
+            {
+                sum += ProcessOneLine(line[startIndex..]);
+                isEnabled = true;
+                Console.WriteLine($"Test: {startIndex}");
+            }
         }
-        return sum;
-    }
-
-    private static int ProcessLineForDos(string line)
-    {
-        int sum = 0;
-        string doPattern = @"(?<!don')\bdo\b";
-        string dontPattern = @"\bdon't\b";
-
-        MatchCollection doMatches = Regex.Matches(line, doPattern);
-        MatchCollection dontMatches = Regex.Matches(line, dontPattern);
-
-        int dontIndex = 0;
-        if (dontMatches[0].Index < doMatches[0].Index)
-        {
-            dontIndex = 1;
-            sum += ProcessOneLine(line.Substring(0, dontMatches[0].Index));
-        }
-
-        for (int i = 0; i < doMatches.Count; i++)
-        {
-            if (i >= dontMatches.Count)
-                return sum + ProcessOneLine(line.Substring(doMatches[i].Index));
-            int length = dontMatches[i + dontIndex].Index - doMatches[i].Index;
-            sum += ProcessOneLine(line.Substring(doMatches[i].Index, length));
-        }
-
         return sum;
     }
 }
