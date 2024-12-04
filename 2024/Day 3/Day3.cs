@@ -1,64 +1,51 @@
-using System.Text;
 using System.Text.RegularExpressions;
 
 public class AdventOfCode2024Day3
 {
+    private const string InputFilePath = "./2024/Day 3/Problem1Input.txt";
     public static void Run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./2024/Day 3/Problem1Input.txt");
-        int sum = Problem1(lines);
-        Console.WriteLine("Day 3 - The sum of the multiplication is: " + sum);
-        int enabledSum = Problem2(lines);
-        Console.WriteLine("Day 3 - The sum of the enabled mutliplication is " + enabledSum);
+        var lines = System.IO.File.ReadAllLines(InputFilePath);
+        Console.WriteLine($"Day 3 - The sum of the multiplication is: {Problem1(lines)}");
+        Console.WriteLine($"Day 3 - The sum of the enabled mutliplication is {Problem2(lines)}");
     }
 
     private static int Problem1(string[] lines)
     {
-        var sum = 0;
-        foreach (string line in lines)
-            sum += ProcessOneLine(line);
-        return sum;
+        return lines.Sum(ProcessOneLine);
     }
 
     private static int ProcessOneLine(string line)
     {
-        string pattern = @"mul\(([0-9,]{1,7})\)";
-        MatchCollection matches = Regex.Matches(line, pattern);
+        const string pattern = @"mul\(([0-9,]{1,7})\)";
+        var matches = Regex.Matches(line, pattern);
 
-        int sum = 0;
-        foreach (Match match in matches)
+        return matches.Sum(match =>
         {
-            string[] variables = match.Groups[1].Value.Split(",");
-            if (variables.Length < 2)
-                continue;
-            sum += ExtractVariable(variables[0]) * ExtractVariable(variables[1]);
-        }
-
-        return sum;
+            var variables = match.Groups[1].Value.Split(",");
+            return variables.Length >= 2
+            ? ExtractVariable(variables[0]) * ExtractVariable(variables[1])
+            : 0;
+        });
     }
 
     private static int ExtractVariable(string input)
     {
-        StringBuilder output = new StringBuilder();
-        for (int i = 0; i < input.Length; i++)
-            if (char.IsNumber(input[i]))
-                output.Append(input[i]);
-
-        return int.Parse(output.ToString());
+        return int.Parse(new string(input.Where(char.IsDigit).ToArray()));
     }
 
     private static int Problem2(string[] lines)
     {
+        const string doPattern = @"do\(\)";
+        const string dontPattern = @"don't\(\)";
+
         int sum = 0;
-        string doPattern = @"do\(\)";
-        string dontPattern = @"don't\(\)";
         bool isEnabled = true;
+
         foreach (string line in lines)
         {
-            MatchCollection doMatches = Regex.Matches(line, doPattern);
-            MatchCollection dontMatches = Regex.Matches(line, dontPattern);
-
-            Console.WriteLine($"There are {dontMatches.Count} dont's and {doMatches.Count} do's");
+            var doMatches = Regex.Matches(line, doPattern);
+            var dontMatches = Regex.Matches(line, dontPattern);
 
             int startIndex = isEnabled ? 0 : doMatches[0].Index;
             int dontIndex = 0;
@@ -68,7 +55,6 @@ public class AdventOfCode2024Day3
 
             while (dontIndex < dontMatches.Count && doIndex < doMatches.Count)
             {
-                Console.WriteLine($"{startIndex} : {dontMatches[dontIndex].Index}");
                 sum += ProcessOneLine(line[startIndex..dontMatches[dontIndex].Index]);
                 while (doIndex < doMatches.Count && doMatches[doIndex].Index < dontMatches[dontIndex].Index)
                     doIndex++;
@@ -86,7 +72,6 @@ public class AdventOfCode2024Day3
             {
                 sum += ProcessOneLine(line[startIndex..]);
                 isEnabled = true;
-                Console.WriteLine($"Test: {startIndex}");
             }
         }
         return sum;
