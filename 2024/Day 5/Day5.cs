@@ -4,23 +4,25 @@ public class AdventOfCode2024Day5
     public static void Run()
     {
         var lines = System.IO.File.ReadAllLines(InputFilePath);
-        Console.WriteLine($"Day 5 - The sum of the middle pages of correct updates is {Problem1(lines)}");
-        Console.WriteLine($"Day 5 - There are {Problem2(lines)} x-mas's in the word search");
+        var rules = ParseRules(lines, out var splitIndex);
+        Console.WriteLine($"Day 5 - The sum of the middle pages of correct updates is {Problem1(lines, rules, splitIndex)}");
+        Console.WriteLine($"Day 5 - The sum of the middle pages of the incorrect updates is {Problem2(lines, rules, splitIndex)}");
     }
 
-    private static int Problem1(string[] lines)
+    private static int Problem1(string[] lines, Dictionary<int, List<int>> rules, int splitIndex)
     {
-        var rules = ParseRules(lines, out var splitIndex);
         int middleSum = 0;
         for (int i = splitIndex + 1; i < lines.Length; i++)
-            if (IsInOrder(lines[i], rules))
-                middleSum += MiddlePageNum(lines[i]);
+        {
+            var pages = lines[i].Split(',').Select(int.Parse).ToArray();
+            if (IsInOrder(pages, rules))
+                middleSum += pages[pages.Length / 2];
+        }
         return middleSum;
     }
 
-    private static bool IsInOrder(string line, Dictionary<int, List<int>> rules)
+    private static bool IsInOrder(int[] pages, Dictionary<int, List<int>> rules)
     {
-        int[] pages = line.Split(',').Select(int.Parse).ToArray();
         for (int i = pages.Length - 1; i > 0; i--)
         {
             if (!rules.TryGetValue(pages[i], out var currentRules))
@@ -30,12 +32,6 @@ public class AdventOfCode2024Day5
                     return false;
         }
         return true;
-    }
-
-    private static int MiddlePageNum(string line)
-    {
-        string[] pages = line.Split(',');
-        return int.Parse(pages[pages.Length / 2]);
     }
 
     private static Dictionary<int, List<int>> ParseRules(string[] lines, out int splitIndex)
@@ -60,8 +56,36 @@ public class AdventOfCode2024Day5
         return rules;
     }
 
-    private static int Problem2(string[] lines)
+    private static int Problem2(string[] lines, Dictionary<int, List<int>> rules, int splitIndex)
     {
-        return 0;
+        int middleSum = 0;
+        for (int i = splitIndex + 1; i < lines.Length; i++)
+        {
+            var pages = lines[i].Split(',').Select(int.Parse).ToArray();
+            if (!IsInOrder(pages, rules))
+                middleSum += SortedMiddlePageNum(pages, rules);
+        }
+        return middleSum;
+    }
+
+    private static int SortedMiddlePageNum(int[] pages, Dictionary<int, List<int>> rules)
+    {
+        return SortPages(pages, rules)[pages.Length / 2];
+    }
+
+    private static int[] SortPages(int[] pages, Dictionary<int, List<int>> rules)
+    {
+        for (int i = pages.Length - 1; i > 0; i--)
+        {
+            if (!rules.TryGetValue(pages[i], out var currentRules))
+                continue;
+            for (int j = i - 1; j > -1; j--)
+                if (currentRules.Contains(pages[j]))
+                {
+                    (pages[i], pages[j]) = (pages[j], pages[i]);
+                    return SortPages(pages, rules);
+                }
+        }
+        return pages;
     }
 }
