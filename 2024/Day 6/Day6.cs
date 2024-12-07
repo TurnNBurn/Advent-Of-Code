@@ -8,7 +8,7 @@ public class AdventOfCode2024Day6
     {
         var lines = System.IO.File.ReadAllLines(InputFilePath);
         Console.WriteLine($"Day 6 - The guard traverses {Problem1(lines)} squares");
-        Console.WriteLine($"Day 6 - There are {Problem2(lines)} places adding an obstacle would trap the guard");
+        //Console.WriteLine($"Day 6 - There are {Problem2(lines)} places adding an obstacle would trap the guard");
     }
 
     private static int Problem1(string[] lines)
