@@ -8,27 +8,25 @@ public class AdventOfCode2024Day6
     public static void Run()
     {
         var lines = File.ReadAllLines(InputFilePath);
+        var visited = new HashSet<(int, int, string)>();
         var timer = new Stopwatch();
         timer.Start();
-        Console.WriteLine($"Day 6 - The guard traverses {Problem1(lines)} squares");
+        var startPosition = FindStartPosition(lines);
+        Console.WriteLine($"Day 6 - The guard traverses {Problem1(lines, startPosition, visited)} squares");
         var elapsed = timer.Elapsed;
         Console.WriteLine($"Day 6 Part 1 took {elapsed}");
         timer.Reset();
         timer.Start();
-        Console.WriteLine($"Day 6 - There are {Problem2(lines)} places adding an obstacle would trap the guard");
+        Console.WriteLine($"Day 6 - There are {Problem2(lines, startPosition, visited)} places adding an obstacle would trap the guard");
         elapsed = timer.Elapsed;
         timer.Stop();
         Console.WriteLine($"Day 6 Part 2 took {elapsed}");
     }
 
-    private static int Problem1(string[] lines)
+    private static int Problem1(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited)
     {
-        (int x, int y) startPosition = FindStartPosition(lines);
-        var visited = new HashSet<(int, int, string)>
-        {
-            (startPosition.x, startPosition.y, "up")
-        };
-        TravelUpIsCycle(lines, startPosition, visited, false);
+        visited.Add((startPosition.x, startPosition.y, "up"));
+        TravelUpIsCycle(lines, startPosition, visited, true, false);
         return visited.Select(entry => (entry.Item1, entry.Item2)).Distinct().Count();
     }
 
@@ -44,27 +42,26 @@ public class AdventOfCode2024Day6
         throw new InvalidOperationException("Input did not contain \'^\'");
     }
 
-    private static int Problem2(string[] lines)
+    private static int Problem2(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited)
     {
         int numCycles = 0;
-        var startPosition = FindStartPosition(lines);
-        for (int i = 0; i < lines.Length; i++)
-            for (int j = 0; j < lines[i].Length; j++)
-            {
-                if (lines[i][j].Equals('#') || (i == startPosition.Item2 && j == startPosition.Item1))
-                    continue;
-                AddNewObstacle(lines, (j, i));
-                if (TravelUpIsCycle(lines, startPosition, new(), true))
-                    numCycles++;
-                RemoveObstacle(lines, (j, i));
-            }
+        var obstacleOptions = visited.Select(entry => (entry.Item1, entry.Item2)).Distinct();
+        foreach ((int x, int y) position in obstacleOptions)
+        {
+            if (position.y == startPosition.y && position.x == startPosition.x)
+                continue;
+            AddNewObstacle(lines, (position.x, position.y));
+            if (TravelUpIsCycle(lines, startPosition, new(), false, false))
+                numCycles++;
+            RemoveObstacle(lines, (position.x, position.y));
+        }
         return numCycles;
     }
 
     private static void AddNewObstacle(string[] lines, (int x, int y) position)
     {
         var stringBuilder = new StringBuilder(lines[position.y]);
-        stringBuilder[position.x] = '#';
+        stringBuilder[position.x] = 'O';
         lines[position.y] = stringBuilder.ToString();
     }
 
@@ -75,58 +72,78 @@ public class AdventOfCode2024Day6
         lines[position.y] = stringBuilder.ToString();
     }
 
-    private static bool TravelUpIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
+    private static bool TravelUpIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool recordVisited, bool lookForCycle)
     {
         while (startPosition.y > 0)
         {
             char nextChar = lines[startPosition.y - 1][startPosition.x];
-            if (nextChar.Equals('#'))
-                return TravelRightIsCycle(lines, startPosition, visited, lookForCycle);
+            if (nextChar.Equals('O'))
+                return TravelRightIsCycle(lines, startPosition, visited, recordVisited, true);
+            else if (nextChar.Equals('#'))
+            {
+                if (lookForCycle)
+                    if (!visited.Add((startPosition.x, startPosition.y, "up")))
+                        return true;
+                return TravelRightIsCycle(lines, startPosition, visited, recordVisited, lookForCycle);
+            }
             startPosition.y--;
-            if (!visited.Add((startPosition.x, startPosition.y, "up")) && lookForCycle)
-                return true;
+            if (recordVisited)
+                visited.Add((startPosition.x, startPosition.y, "up"));
         }
         return false;
     }
 
-    private static bool TravelRightIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
+    private static bool TravelRightIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool recordVisited, bool lookForCycle)
     {
         while (startPosition.x < lines[startPosition.y].Length - 1)
         {
             char nextChar = lines[startPosition.y][startPosition.x + 1];
-            if (nextChar.Equals('#'))
-                return TravelDownIsCycle(lines, startPosition, visited, lookForCycle);
+            if (nextChar.Equals('O'))
+                return TravelDownIsCycle(lines, startPosition, visited, recordVisited, true);
+            else if (nextChar.Equals('#'))
+            {
+                if (lookForCycle)
+                    if (!visited.Add((startPosition.x, startPosition.y, "right")))
+                        return true;
+                return TravelDownIsCycle(lines, startPosition, visited, recordVisited, lookForCycle);
+            }
             startPosition.x++;
-            if (!visited.Add((startPosition.x, startPosition.y, "right")) && lookForCycle)
-                return true;
+            if (recordVisited)
+                visited.Add((startPosition.x, startPosition.y, "right"));
         }
         return false;
     }
 
-    private static bool TravelDownIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
+    private static bool TravelDownIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool recordVisited, bool lookForCycle)
     {
         while (startPosition.y < lines.Length - 1)
         {
             char nextChar = lines[startPosition.y + 1][startPosition.x];
-            if (nextChar.Equals('#'))
-                return TravelLeftIsCycle(lines, startPosition, visited, lookForCycle);
+            if (nextChar.Equals('O'))
+                return TravelLeftIsCycle(lines, startPosition, visited, recordVisited, true);
+            else if (nextChar.Equals('#'))
+                return TravelLeftIsCycle(lines, startPosition, visited, recordVisited, lookForCycle);
             startPosition.y++;
-            if (!visited.Add((startPosition.x, startPosition.y, "down")) && lookForCycle)
-                return true;
+            if (recordVisited)
+                visited.Add((startPosition.x, startPosition.y, "down"));
         }
         return false;
     }
 
-    private static bool TravelLeftIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
+    private static bool TravelLeftIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool recordVisited, bool lookForCycle)
     {
         while (startPosition.x > 0)
         {
             char nextChar = lines[startPosition.y][startPosition.x - 1];
+            if (nextChar.Equals('O'))
+                return TravelUpIsCycle(lines, startPosition, visited, recordVisited, true);
             if (nextChar.Equals('#'))
-                return TravelUpIsCycle(lines, startPosition, visited, lookForCycle);
+            {
+                return TravelUpIsCycle(lines, startPosition, visited, recordVisited, lookForCycle);
+            }
             startPosition.x--;
-            if (!visited.Add((startPosition.x, startPosition.y, "left")) && lookForCycle)
-                return true;
+            if (recordVisited)
+                visited.Add((startPosition.x, startPosition.y, "left"));
         }
         return false;
     }
