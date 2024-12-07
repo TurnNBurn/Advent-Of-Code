@@ -8,90 +8,18 @@ public class AdventOfCode2024Day6
     {
         var lines = System.IO.File.ReadAllLines(InputFilePath);
         Console.WriteLine($"Day 6 - The guard traverses {Problem1(lines)} squares");
-        lines = System.IO.File.ReadAllLines(InputFilePath);
         Console.WriteLine($"Day 6 - There are {Problem2(lines)} places adding an obstacle would trap the guard");
     }
 
     private static int Problem1(string[] lines)
     {
         (int x, int y) startPosition = FindStartPosition(lines);
-        MarkAsVisited(lines, startPosition);
-        return TravelUp(lines, startPosition, 1);
-    }
-
-    private static int TravelUp(string[] lines, (int x, int y) startPosition, int numVisited)
-    {
-        while (startPosition.y > 0)
+        var visited = new HashSet<(int, int, string)>
         {
-            char nextChar = lines[startPosition.y - 1][startPosition.x];
-            if (nextChar.Equals('#'))
-                return TravelRight(lines, startPosition, numVisited);
-            startPosition.y--;
-            if (!nextChar.Equals('X'))
-            {
-                numVisited++;
-                MarkAsVisited(lines, startPosition);
-            }
-        }
-        return numVisited;
-    }
-
-    private static int TravelRight(string[] lines, (int x, int y) startPosition, int numVisited)
-    {
-        while (startPosition.x < lines[startPosition.y].Length - 1)
-        {
-            char nextChar = lines[startPosition.y][startPosition.x + 1];
-            if (nextChar.Equals('#'))
-                return TravelDown(lines, startPosition, numVisited);
-            startPosition.x++;
-            if (!nextChar.Equals('X'))
-            {
-                numVisited++;
-                MarkAsVisited(lines, startPosition);
-            }
-        }
-        return numVisited;
-    }
-
-    private static int TravelDown(string[] lines, (int x, int y) startPosition, int numVisited)
-    {
-        while (startPosition.y < lines.Length - 1)
-        {
-            char nextChar = lines[startPosition.y + 1][startPosition.x];
-            if (nextChar.Equals('#'))
-                return TravelLeft(lines, startPosition, numVisited);
-            startPosition.y++;
-            if (!nextChar.Equals('X'))
-            {
-                numVisited++;
-                MarkAsVisited(lines, startPosition);
-            }
-        }
-        return numVisited;
-    }
-
-    private static int TravelLeft(string[] lines, (int x, int y) startPosition, int numVisited)
-    {
-        while (startPosition.x > 0)
-        {
-            char nextChar = lines[startPosition.y][startPosition.x - 1];
-            if (nextChar.Equals('#'))
-                return TravelUp(lines, startPosition, numVisited);
-            startPosition.x--;
-            if (!nextChar.Equals('X'))
-            {
-                numVisited++;
-                MarkAsVisited(lines, startPosition);
-            }
-        }
-        return numVisited;
-    }
-
-    private static void MarkAsVisited(string[] lines, (int x, int y) startPosition)
-    {
-        var stringBuilder = new StringBuilder(lines[startPosition.y]);
-        stringBuilder[startPosition.x] = 'X';
-        lines[startPosition.y] = stringBuilder.ToString();
+            (startPosition.x, startPosition.y, "up")
+        };
+        TravelUpIsCycle(lines, startPosition, visited, false);
+        return visited.Select(entry => (entry.Item1, entry.Item2)).Distinct().Count();
     }
 
     private static (int, int) FindStartPosition(string[] lines)
@@ -116,7 +44,7 @@ public class AdventOfCode2024Day6
                 if (lines[i][j].Equals('#') || (i == startPosition.Item2 && j == startPosition.Item1))
                     continue;
                 AddNewObstacle(lines, (j, i));
-                if (TravelUpIsCycle(lines, startPosition, new()))
+                if (TravelUpIsCycle(lines, startPosition, new(), true))
                     numCycles++;
                 RemoveObstacle(lines, (j, i));
             }
@@ -137,57 +65,57 @@ public class AdventOfCode2024Day6
         lines[position.y] = stringBuilder.ToString();
     }
 
-    private static bool TravelUpIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited)
+    private static bool TravelUpIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
     {
         while (startPosition.y > 0)
         {
             char nextChar = lines[startPosition.y - 1][startPosition.x];
             if (nextChar.Equals('#'))
-                return TravelRightIsCycle(lines, startPosition, visited);
+                return TravelRightIsCycle(lines, startPosition, visited, lookForCycle);
             startPosition.y--;
-            if (!visited.Add((startPosition.x, startPosition.y, "up")))
+            if (!visited.Add((startPosition.x, startPosition.y, "up")) && lookForCycle)
                 return true;
         }
         return false;
     }
 
-    private static bool TravelRightIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited)
+    private static bool TravelRightIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
     {
         while (startPosition.x < lines[startPosition.y].Length - 1)
         {
             char nextChar = lines[startPosition.y][startPosition.x + 1];
             if (nextChar.Equals('#'))
-                return TravelDownIsCycle(lines, startPosition, visited);
+                return TravelDownIsCycle(lines, startPosition, visited, lookForCycle);
             startPosition.x++;
-            if (!visited.Add((startPosition.x, startPosition.y, "right")))
+            if (!visited.Add((startPosition.x, startPosition.y, "right")) && lookForCycle)
                 return true;
         }
         return false;
     }
 
-    private static bool TravelDownIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited)
+    private static bool TravelDownIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
     {
         while (startPosition.y < lines.Length - 1)
         {
             char nextChar = lines[startPosition.y + 1][startPosition.x];
             if (nextChar.Equals('#'))
-                return TravelLeftIsCycle(lines, startPosition, visited);
+                return TravelLeftIsCycle(lines, startPosition, visited, lookForCycle);
             startPosition.y++;
-            if (!visited.Add((startPosition.x, startPosition.y, "down")))
+            if (!visited.Add((startPosition.x, startPosition.y, "down")) && lookForCycle)
                 return true;
         }
         return false;
     }
 
-    private static bool TravelLeftIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited)
+    private static bool TravelLeftIsCycle(string[] lines, (int x, int y) startPosition, HashSet<(int, int, string)> visited, bool lookForCycle)
     {
         while (startPosition.x > 0)
         {
             char nextChar = lines[startPosition.y][startPosition.x - 1];
             if (nextChar.Equals('#'))
-                return TravelUpIsCycle(lines, startPosition, visited);
+                return TravelUpIsCycle(lines, startPosition, visited, lookForCycle);
             startPosition.x--;
-            if (!visited.Add((startPosition.x, startPosition.y, "left")))
+            if (!visited.Add((startPosition.x, startPosition.y, "left")) && lookForCycle)
                 return true;
         }
         return false;
