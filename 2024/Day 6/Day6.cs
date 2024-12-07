@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -6,9 +7,18 @@ public class AdventOfCode2024Day6
     private const string InputFilePath = "./2024/Day 6/Problem1Input.txt";
     public static void Run()
     {
-        var lines = System.IO.File.ReadAllLines(InputFilePath);
+        var lines = File.ReadAllLines(InputFilePath);
+        var timer = new Stopwatch();
+        timer.Start();
         Console.WriteLine($"Day 6 - The guard traverses {Problem1(lines)} squares");
-        //Console.WriteLine($"Day 6 - There are {Problem2(lines)} places adding an obstacle would trap the guard");
+        var elapsed = timer.Elapsed;
+        Console.WriteLine($"Day 6 Part 1 took {elapsed}");
+        timer.Reset();
+        timer.Start();
+        Console.WriteLine($"Day 6 - There are {Problem2(lines)} places adding an obstacle would trap the guard");
+        elapsed = timer.Elapsed;
+        timer.Stop();
+        Console.WriteLine($"Day 6 Part 2 took {elapsed}");
     }
 
     private static int Problem1(string[] lines)

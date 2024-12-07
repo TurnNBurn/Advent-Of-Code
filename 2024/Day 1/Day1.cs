@@ -1,13 +1,22 @@
+using System.Diagnostics;
+
 public class AdventOfCode2024Day1
 {
 
     public static void Run()
     {
-        string[] lines = System.IO.File.ReadAllLines("./2024/Day 1/Problem1Input.txt");
-        int distance = Problem1(lines);
-        Console.WriteLine("Day 1 - Problem 1: the total distances in the two lists is " + distance);
-        int similarityScore = Problem2(lines);
-        Console.WriteLine("Day 1 - Problem 2: the lists similarity score is " + similarityScore);
+        string[] lines = File.ReadAllLines("./2024/Day 1/Problem1Input.txt");
+        var timer = new Stopwatch();
+        timer.Start();
+        Console.WriteLine($"Day 1 - Problem 1: the total distances in the two lists is {Problem1(lines)}");
+        var elapsed = timer.Elapsed;
+        Console.WriteLine($"Day 1 Part 1 took {elapsed}");
+        timer.Restart();
+        timer.Start();
+        Console.WriteLine($"Day 1 - Problem 2: the lists similarity score is {Problem2(lines)}");
+        elapsed = timer.Elapsed;
+        timer.Stop();
+        Console.WriteLine($"Day 1 Part 2 took {elapsed}");
     }
 
     private static int Problem1(string[] lines)

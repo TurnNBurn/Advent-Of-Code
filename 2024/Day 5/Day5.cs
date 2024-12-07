@@ -1,12 +1,23 @@
+using System.Diagnostics;
+
 public class AdventOfCode2024Day5
 {
     private const string InputFilePath = "./2024/Day 5/Problem1Input.txt";
     public static void Run()
     {
-        var lines = System.IO.File.ReadAllLines(InputFilePath);
+        var lines = File.ReadAllLines(InputFilePath);
         var rules = ParseRules(lines, out var splitIndex);
+        var timer = new Stopwatch();
+        timer.Start();
         Console.WriteLine($"Day 5 - The sum of the middle pages of correct updates is {Problem1(lines, rules, splitIndex)}");
+        var elapsed = timer.Elapsed;
+        Console.WriteLine($"Day 5 Part 1 took {elapsed}");
+        timer.Reset();
+        timer.Start();
         Console.WriteLine($"Day 5 - The sum of the middle pages of the incorrect updates is {Problem2(lines, rules, splitIndex)}");
+        elapsed = timer.Elapsed;
+        timer.Stop();
+        Console.WriteLine($"Day 5 Part 2 took {elapsed}");
     }
 
     private static int Problem1(string[] lines, Dictionary<int, List<int>> rules, int splitIndex)

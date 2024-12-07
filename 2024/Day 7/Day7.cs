@@ -1,15 +1,22 @@
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
 public class AdventOfCode2024Day7
 {
     private const string InputFilePath = "./2024/Day 7/Problem1Input.txt";
     public static void Run()
     {
-        var lines = System.IO.File.ReadAllLines(InputFilePath);
+        var lines = File.ReadAllLines(InputFilePath);
+        var timer = new Stopwatch();
+        timer.Start();
         Console.WriteLine($"Day 7 - The sum of valid equations is {Problem1(lines)}");
+        var elapsed = timer.Elapsed;
+        Console.WriteLine($"Day 7 Part 1 took {elapsed}");
+        timer.Reset();
+        timer.Start();
         Console.WriteLine($"Day 7 - The sum of valid equations with concat is {Problem2(lines)}");
+        elapsed = timer.Elapsed;
+        timer.Stop();
+        Console.WriteLine($"Day 7 Part 2 took {elapsed}");
     }
 
     private static long Problem1(string[] lines)

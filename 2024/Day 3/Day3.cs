@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 public class AdventOfCode2024Day3
@@ -5,9 +6,18 @@ public class AdventOfCode2024Day3
     private const string InputFilePath = "./2024/Day 3/Problem1Input.txt";
     public static void Run()
     {
-        var lines = System.IO.File.ReadAllLines(InputFilePath);
+        var lines = File.ReadAllLines(InputFilePath);
+        var timer = new Stopwatch();
+        timer.Start();
         Console.WriteLine($"Day 3 - The sum of the multiplication is: {Problem1(lines)}");
+        var elapsed = timer.Elapsed;
+        Console.WriteLine($"Day 3 Part 1 took {elapsed}");
+        timer.Reset();
+        timer.Start();
         Console.WriteLine($"Day 3 - The sum of the enabled mutliplication is {Problem2(lines)}");
+        elapsed = timer.Elapsed;
+        timer.Stop();
+        Console.WriteLine($"Day 3 Part 2 took {elapsed}");
     }
 
     private static int Problem1(string[] lines)
